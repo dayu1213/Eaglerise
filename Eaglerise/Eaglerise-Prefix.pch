@@ -1,0 +1,51 @@
+//
+//  Eaglerise-Prefix.pch
+//  Eaglerise
+//
+//  Created by Evan on 15/10/30.
+//  Copyright © 2015年 Eaglerise. All rights reserved.
+//
+
+#ifndef Eaglerise_Prefix_pch
+#define Eaglerise_Prefix_pch
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+
+#endif /* Eaglerise_Prefix_pch */
+
+#import <Availability.h>
+
+#ifndef __IPHONE_3_0
+#warning "This project uses features only available in iOS SDK 3.0 and later."
+#endif
+
+#ifdef __OBJC__
+#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#import "BabyBluetooth.h"
+#endif
+
+
+//屏幕宽度
+#define Device_Wdith ([UIScreen mainScreen].applicationFrame.size.width)
+//屏幕除去状态栏高度
+
+#define Device_Height ([UIScreen mainScreen].applicationFrame.size.height)
+
+//设备读取
+#define DeviceRead (1)
+//输出读取
+#define OutPutRead (2)
+//预览读取
+#define PreviewRead (3)
+//时间读取
+#define TimeRead (4)
+//设备名称读取
+#define DeviceNameRead (5)
+//通道名称读取
+#define CannelNameRead (6)
+//版本读取
+#define VersionRead (7)
+//获取状态
+#define DeviceTypeRead (8)
