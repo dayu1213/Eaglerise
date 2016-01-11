@@ -126,6 +126,8 @@ static RemoteController *instance;
     {
    
         [currPeripheral writeValue:messageRequest forCharacteristic:characteristic type:CBCharacteristicWriteWithResponse];
+        
+//        NSLog(@"%@",characteristic.UUID);
 //        NSLog(@"------------1--------------");
         
             mydelegate.number++;

@@ -300,7 +300,7 @@
             //调整委托方法的channel，如果没设置默认为缺省频道
             NSString *channel = [babysister->pocket valueForKey:@"channel"];
             [babySpeaker switchChannel:channel];
-            //缓存的peripheral
+            //缓存的peripheralF
             CBPeripheral *cachedPeripheral = [babysister->pocket valueForKey:NSStringFromClass([CBPeripheral class])];
             //校验series合法性
             [self validateProcess];
@@ -366,6 +366,7 @@
 
 //私有方法，停止扫描和断开连接，清空pocket
 -(void)babyStop{
+    
     NSLog(@">>>did stop");
     [timerForStop invalidate];
     [self resetSeriseParmeter];
@@ -489,6 +490,7 @@
         if (peripheral.state == CBPeripheralStateConnected) {
             self->babysister->oneReadValueForDescriptors = YES;
             [peripheral readValueForCharacteristic:characteristic];
+            NSLog(@"characteristic:%@",characteristic);
             [peripheral discoverDescriptorsForCharacteristic:characteristic];
         }else{
             NSLog(@"!!!设备当前处于非连接状态");

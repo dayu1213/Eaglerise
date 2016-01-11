@@ -44,6 +44,7 @@
 -(void)setBlockOnDiscoverDescriptorsForCharacteristic:(void (^)(CBPeripheral *peripheral,CBCharacteristic *characteristic,NSError *error))block;
 //设置读取到Descriptors值的block
 -(void)setBlockOnReadValueForDescriptors:(void (^)(CBPeripheral *peripheral,CBDescriptor *descriptorNSError,NSError *error))block;
+-(void)babyStop;
 
 /*
  channel的委托

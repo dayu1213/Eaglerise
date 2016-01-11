@@ -191,7 +191,12 @@
             [cell addSubview:Lbl];
             
             UIImageView * signalImg = [[UIImageView alloc]initWithFrame:CGRectMake((Device_Wdith-50)/2+20, 12, 20, 20)];
-            [signalImg setImage:[UIImage imageNamed:@"signal1"]];
+            
+//            [signalImg setImage:[UIImage imageNamed:@"signal1"]];
+            [signalImg setImage:[UIImage imageNamed:RSSIArray[indexPath.row]]];
+            
+            NSLog(@"%@",RSSIArray[indexPath.row]);
+            
             [signalImg setBackgroundColor:[UIColor clearColor]];
             signalImg.tag = 1000 + indexPath.row;
             [cell addSubview:signalImg];
@@ -248,6 +253,8 @@
     indexRow = (int)indexPath.row;
 //    [self readRequest:2 requestDic:temp currPeripheral:[peripherals objectAtIndex:indexPath.row] characteristicArray:characteristics delegate:self Baby:self->baby callFrom:DeviceTypeRead];
 //
+    
+    [baby cancelScan];
     
     CBPeripheral *peripheral = [peripherals objectAtIndex:indexPath.row];
     
@@ -430,7 +437,7 @@
         {
             [RSSIArray addObject:@"signal1"];
         }
-        else if(abs(RSSI)>=-70&&RSSI<-50)
+        else if(abs(RSSI)>=-70&&RSSI<-40)
         {
             [RSSIArray addObject:@"signal2"];
         }
@@ -439,10 +446,14 @@
            [RSSIArray addObject:@"signal3"];
         }
         
-        [DeviceTView reloadData];
         
     }
+    
+    [DeviceTView reloadData];
+
+    
 }
+
 
 
 
@@ -511,16 +522,29 @@
     
     reloadBtn.hidden = YES;
     //停止之前的连接
+//    [baby stop];
+    
+    [baby babyStop];
+
     [baby cancelAllPeripheralsConnection];
+//    [baby stop];
 //    [indexPaths addObject:indexPath];
     [peripherals removeAllObjects];
+    peripherals = nil;
+    peripherals = [[NSMutableArray alloc] init];
     [peripheralsAD removeAllObjects];
+    peripheralsAD = nil;
+    peripheralsAD = [[NSMutableArray alloc] init];
     [RSSIArray removeAllObjects];
+    RSSIArray = nil;
+    RSSIArray = [[NSMutableArray alloc] init];
     [DeviceName removeAllObjects];
+    DeviceName = nil;
+    DeviceName = [[NSMutableArray alloc] init];
     //设置委托后直接可以使用，无需等待CBCentralManagerStatePoweredOn状态。
     
 //=============================================================================
-    sleep(2);
+//    sleep(2);
     baby.scanForPeripherals().begin();
 }
 /**Nofity返回值*/

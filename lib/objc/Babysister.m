@@ -417,6 +417,9 @@
 }
 
 -(void)peripheral:(CBPeripheral *)peripheral didWriteValueForDescriptor:(CBDescriptor *)descriptor error:(NSError *)error{
+    
+    
+    
     //    NSLog(@">>>didWriteValueForCharacteristic");
     //    NSLog(@">>>uuid:%@,new value:%@",descriptor.UUID,descriptor.value);
 }

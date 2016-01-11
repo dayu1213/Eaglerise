@@ -978,6 +978,8 @@ if(index == DeviceTypeRead)
     [self readRequest:2 requestDic:temp currPeripheral:self.currPeripheral characteristicArray:mydelegate.characteristics delegate:self Baby:self->baby callFrom:DeviceRead];
     
 
+//    NSDictionary * temp = [NSDictionary dictionaryWithObjectsAndKeys:@"12",@"index",nil];
+//    [self readRequest:2 requestDic:temp currPeripheral:self.currPeripheral characteristicArray:mydelegate.specialPeripheralInfo.characteristics delegate:self Baby:self->baby callFrom:DeviceNameRead];
     
 
 }
@@ -1422,11 +1424,20 @@ if(index == DeviceTypeRead)
 
 -(void)loadDataAction:(NSNotification *)notification
 {
+    
     isRead = NO;
     NSDictionary * temp = notification.userInfo;
     self.currPeripheral = [temp objectForKey:@"currPeripheral"];
+    if(baby!=nil)
+    {
+//        [baby cancelAllPeripheralsConnection];
+        [baby stop];
+    }
     self->baby = [temp objectForKey:@"baby"];
-    [baby cancelAllPeripheralsConnection];
+//    [baby cancelAllPeripheralsConnection];
+//    self->baby = [temp objectForKey:@"baby"];
+
+    
     [self babyDelegate];
     mydelegate.currPeripheral = [temp objectForKey:@"currPeripheral"];
     mydelegate.baby = [temp objectForKey:@"baby"];
