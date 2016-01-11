@@ -9,13 +9,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Eaglerise/ControlViewController.m"
-            timestampString = "473188477.112699"
+            filePath = "lib/objc/Babysister.m"
+            timestampString = "474193402.873734"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "662"
-            endingLineNumber = "662"
-            landmarkName = "-resultStr:index:"
+            startingLineNumber = "420"
+            endingLineNumber = "420"
+            landmarkName = "-peripheral:didWriteValueForDescriptor:error:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -25,13 +25,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Eaglerise/ControlViewController.m"
-            timestampString = "473190003.522645"
+            filePath = "Eaglerise/SettingViewController.m"
+            timestampString = "474201080.733008"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "749"
-            endingLineNumber = "749"
-            landmarkName = "-resultStr:index:"
+            startingLineNumber = "991"
+            endingLineNumber = "991"
+            landmarkName = "-reloadDeviceTime"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -41,28 +41,12 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Eaglerise/ControlViewController.m"
-            timestampString = "473190016.611012"
+            filePath = "Eaglerise/SettingViewController.m"
+            timestampString = "474201080.733008"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "741"
-            endingLineNumber = "741"
-            landmarkName = "-resultStr:index:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Eaglerise/ControlViewController.m"
-            timestampString = "473191161.598467"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "737"
-            endingLineNumber = "737"
+            startingLineNumber = "2473"
+            endingLineNumber = "2473"
             landmarkName = "-resultStr:index:"
             landmarkType = "5">
          </BreakpointContent>

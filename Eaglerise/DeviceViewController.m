@@ -8,6 +8,7 @@
 
 #import "DeviceViewController.h"
 #import "SVProgressHUD.h"
+#import <CoreBluetooth/CoreBluetooth.h>
 
 @interface DeviceViewController ()<UITableViewDataSource,UITableViewDelegate>
 {
@@ -44,6 +45,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     self.view.backgroundColor = [UIColor whiteColor];
+    
     [self iv];
     [self lc];
 }
@@ -253,7 +255,8 @@
     
     [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"你点击了第%d行,选择名字为%@的设备",indexRow,peripheral.name]];
 
-
+    CBPeripheral * per = [peripherals objectAtIndex:indexRow];
+    NSLog(@"连接到得外设%@",per.name);
     NSDictionary * temp  =  [NSDictionary dictionaryWithObjectsAndKeys:[peripherals objectAtIndex:indexRow], @"currPeripheral",self->baby,@"baby", nil];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"tabAction" object:self userInfo:[temp copy]];
@@ -505,6 +508,7 @@
 
 -(void)roadingAction
 {
+    
     reloadBtn.hidden = YES;
     //停止之前的连接
     [baby cancelAllPeripheralsConnection];
@@ -514,6 +518,9 @@
     [RSSIArray removeAllObjects];
     [DeviceName removeAllObjects];
     //设置委托后直接可以使用，无需等待CBCentralManagerStatePoweredOn状态。
+    
+//=============================================================================
+    sleep(2);
     baby.scanForPeripherals().begin();
 }
 /**Nofity返回值*/

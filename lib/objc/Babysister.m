@@ -402,7 +402,7 @@
 
 -(void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error{
 
-//        NSLog(@">>>uuid:%@,new value:%@",characteristic.UUID,characteristic.value);
+        NSLog(@">>>uuid:%@,new value:%@",characteristic.UUID,characteristic.value);
     if (error) {
         NSLog(@"=======%@",error.userInfo);
 //        [self updateLog:[error.userInfo JSONString]];

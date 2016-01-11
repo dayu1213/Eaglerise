@@ -43,8 +43,53 @@
         
         mydelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
         userdefaults = [NSUserDefaults standardUserDefaults];
+        
     }
     return self;
+}
+
+- (void)overViewData{
+
+    /*
+    NSDate * date = [NSDate date];
+    //        NSDateFormatter  *dateformatter=[[NSDateFormatter alloc] init];
+    //        [dateformatter setDateFormat:@"yyyy-MM-dd HH:mm:SS.ss"];
+    
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSUInteger unitFlags = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit | NSWeekdayCalendarUnit;
+    NSDateComponents *dateComponent = [calendar components:unitFlags fromDate:date];
+    
+    //        NSInteger year = [dateComponent year];
+    //        NSInteger month = [dateComponent month];
+    //        NSInteger day = [dateComponent day];
+    NSInteger hour1 = [dateComponent hour];
+    //        NSInteger minute = [dateComponent minute];
+    //        NSInteger second = [dateComponent second];
+    NSInteger week1 = [dateComponent weekday];
+    
+    
+    NSInteger value2 = week1+1;
+    if (week1 == 6) {
+        value2 = 0;
+    }
+    time = hour1;
+    
+    NSDictionary * temp = [NSDictionary dictionaryWithObjectsAndKeys:@"1",@"index",[NSString stringWithFormat:@"%d",time],@"value1",[NSString stringWithFormat:@"%d",value2],@"value2", nil];
+    //        启动预览
+    [self getRequest:5 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+    */
+    
+    [self StartAction];
+    [self performSelector:@selector(StartAction) withObject:nil afterDelay:1];
+    
+
+}
+
+- (void)stopRead{
+
+    NSDictionary * temp = [NSDictionary dictionaryWithObjectsAndKeys:@"7",@"index", nil];
+    [self getRequest:2 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+
 }
 
 - (void)viewDidLoad {
@@ -326,13 +371,13 @@
 //        NSLog(@"%f",Device_Wdith);
     }
     
-    WeekSlider = [[UISlider alloc] initWithFrame:CGRectMake(50, 449, Device_Wdith-100, 3)];
+    WeekSlider = [[UISlider alloc] initWithFrame:CGRectMake(50, 440, Device_Wdith-100, 20)];
     WeekSlider.minimumValue = 0;
     WeekSlider.maximumValue = 6;
     WeekSlider.minimumTrackTintColor = [UIColor colorWithRed:(float)202/255.0 green:(float)202/255.0 blue:(float)202/255.0 alpha:1.0f];
    [WeekSlider setThumbImage:[UIImage imageNamed:@"BlueG"] forState:UIControlStateHighlighted];
     [WeekSlider setThumbImage:[UIImage imageNamed:@"BlueG"] forState:UIControlStateNormal];
-    
+    WeekSlider.minimumTrackTintColor = [UIColor colorWithRed:(float)202/255.0 green:(float)202/255.0 blue:(float)202/255.0 alpha:1.0f];
     WeekSlider.maximumTrackTintColor = [UIColor colorWithRed:(float)202/255.0 green:(float)202/255.0 blue:(float)202/255.0 alpha:1.0f];
     WeekSlider.value = 0;
     
@@ -581,6 +626,7 @@
         
         [okBtn setTitle:@"Stop Play" forState:UIControlStateNormal];
        temp = [NSDictionary dictionaryWithObjectsAndKeys:@"1",@"index",[NSString stringWithFormat:@"%d",time],@"value1",[NSString stringWithFormat:@"%d",value2],@"value2", nil];
+//        启动预览
         [self getRequest:5 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
         
         timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(readAction) userInfo:nil repeats:YES];
@@ -624,6 +670,9 @@
     self.currPeripheral = mydelegate.currPeripheral;
     self->baby  = mydelegate.baby;
     self.characteristic = [mydelegate.characteristics objectAtIndex:1];
+    
+    
+    [self overViewData];
 }
 
 -(void)resultStr:(CBCharacteristic *)characteristics index:(int)index

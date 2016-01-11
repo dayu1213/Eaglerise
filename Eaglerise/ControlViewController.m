@@ -978,11 +978,14 @@ if(index == DeviceTypeRead)
     [self readRequest:2 requestDic:temp currPeripheral:self.currPeripheral characteristicArray:mydelegate.characteristics delegate:self Baby:self->baby callFrom:DeviceRead];
     
 
+    
+
 }
 
 //读取输出
 -(void)loadCannel
 {
+    
     NSDictionary * temp = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%d",ChannelNum],@"index",nil];
     
     [self readRequest:2 requestDic:temp currPeripheral:self.currPeripheral characteristicArray:mydelegate.characteristics delegate:self Baby:self->baby callFrom:OutPutRead];
@@ -1213,7 +1216,7 @@ if(index == DeviceTypeRead)
 }
 - (void)startTimer
  {
-         Hearttimer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(timerFire) userInfo:nil repeats:YES];
+//         Hearttimer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(timerFire) userInfo:nil repeats:YES];
 //         [[NSRunLoop currentRunLoop] run];
      }
 - (void)timerFire

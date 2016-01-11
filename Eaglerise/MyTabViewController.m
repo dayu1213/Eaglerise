@@ -18,6 +18,7 @@
     long huaHMSegmentedControl;
     UIColor * wordColor;
     UIColor * wordSelColor;
+    UIView * dataView;
 }
 @property (nonatomic,strong) UIScrollView * contentSView;
 
@@ -114,6 +115,9 @@
     
     _contentSView.frame=CGRectMake(0, 54, Device_Wdith, Device_Height-83);
     [_contentSView setContentSize: CGSizeMake(Device_Wdith*4, Device_Height-84)];
+//    _contentSView.frame=CGRectMake(0, 54, Device_Wdith, Device_Height-34);
+//    [_contentSView setContentSize: CGSizeMake(Device_Wdith*4, Device_Height-35)];
+
     [_contentSView setPagingEnabled:YES];
     [_contentSView setScrollEnabled:NO];
     
@@ -429,6 +433,25 @@
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"ld" object:self userInfo:[temp copy]];
     
+    dataView = [[UIView alloc] initWithFrame:self.view.frame];
+    
+    UILabel * label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, Device_Wdith, 200)];
+    
+    label.text = @"Are connected, please wait a moment";
+    label.center = self.view.center;
+    [label setTextAlignment:NSTextAlignmentCenter];
+    [label setFont:[UIFont systemFontOfSize:14]];
+    [dataView addSubview:label];
+    dataView.backgroundColor = [UIColor lightGrayColor];
+    [self.view addSubview:dataView];
+    
+    [self performSelector:@selector(moveView) withObject:nil afterDelay:5.0f];
+    
+}
+
+- (void)moveView{
+
+    [dataView removeFromSuperview];
 }
 
 -(void)Othertab2Action:(NSNotification *)notification

@@ -137,6 +137,8 @@ static RemoteController *instance;
 
 }
 
+
+
 -(void)HeartwriteValue:(NSData *)messageRequest currPeripheral:(CBPeripheral *)currPeripheral characteristic:(CBCharacteristic *)characteristic delegate:(id)delegate{
     
     [[self clientDelegates] setValue:delegate forKey:@"1"];

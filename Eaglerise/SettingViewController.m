@@ -37,6 +37,11 @@
     NSString * loadName;
     int channelIndex;
     NSMutableDictionary* channelDic;
+    NSTimer * timer;
+    UILabel * timeLabel;
+    
+
+    
 }
 @property (nonatomic,strong) UITextField * deviceNameTxt,* channelTxt;
 //@property (nonatomic,strong) UIPickerView *PickerView;
@@ -88,6 +93,7 @@
    
     [self iv];
     [self lc];
+//    [self readData];
 }
 -(void)viewWillAppear:(BOOL)animated
 {
@@ -100,6 +106,54 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+
+- (void)readData{
+
+    NSDate * date = [NSDate date];
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSUInteger unitFlags = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit | NSWeekdayCalendarUnit;
+    NSDateComponents *dateComponent = [calendar components:unitFlags fromDate:date];
+//    NSInteger year = [dateComponent year];
+//    NSInteger month = [dateComponent month];
+//    NSInteger day = [dateComponent day];
+    NSInteger hour1 = [dateComponent hour];
+//    NSInteger minute = [dateComponent minute];
+//    NSInteger second = [dateComponent second];
+    NSInteger week = [dateComponent weekday];
+    
+    if(self.currPeripheral != nil &&self.characteristic != nil)
+    {
+        //    baby.channel(channelOnPeropheralView).characteristicDetails(self.currPeripheral,self.characteristic);
+        
+        NSInteger value2 = week+1;
+        if (week == 6) {
+            value2 = 0;
+        }
+        
+        NSDictionary * temp;
+        
+            temp = [NSDictionary dictionaryWithObjectsAndKeys:@"1",@"index",[NSString stringWithFormat:@"%ld",hour1],@"value1",[NSString stringWithFormat:@"%ld",value2],@"value2", nil];
+            [self getRequest:5 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+            
+            timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(readAction) userInfo:nil repeats:YES];
+        
+            [timer invalidate];
+            timer = nil;
+            temp = [NSDictionary dictionaryWithObjectsAndKeys:@"7",@"index", nil];
+            [self getRequest:2 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+        
+    }
+
+
+}
+
+-(void)readAction
+{
+    NSDictionary * temp = [NSDictionary dictionaryWithObjectsAndKeys:@"6",@"index", nil];
+    
+    [self readRequest:2 requestDic:temp currPeripheral:self.currPeripheral characteristicArray:mydelegate.characteristics delegate:self Baby:self->baby callFrom:PreviewRead];
 }
 
 #pragma mark --
@@ -490,7 +544,20 @@
     [Lbl setTextColor:[UIColor colorWithRed:(float)135/255.0 green:(float)135/255.0 blue:(float)135/255.0 alpha:1.0f]];
     [Lbl setFont:[UIFont boldSystemFontOfSize:16]];
     [contentSView addSubview:Lbl];
-    contentSView.contentSize = CGSizeMake(Device_Wdith, 470);
+    
+    UILabel * Label = [[UILabel alloc] initWithFrame:CGRectMake(10, 440, 80, 100)];
+    Label.text = @"DeviceTime:";
+    Label.textColor = [UIColor blackColor];
+    Label.font = [UIFont systemFontOfSize:14];
+    [contentSView addSubview:Label];
+    
+    timeLabel = [[UILabel alloc] initWithFrame:CGRectMake(110, 440, Device_Wdith - 140, 40)];
+    timeLabel.textColor = [UIColor blackColor];
+    timeLabel.font = [UIFont systemFontOfSize:14];
+    Label.center = CGPointMake(70, timeLabel.center.y);
+    [contentSView addSubview:timeLabel];
+    
+    contentSView.contentSize = CGSizeMake(Device_Wdith, 480);
     
     //注册键盘弹起与收起通知
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -670,7 +737,7 @@
     [FirstView addSubview:TurnOnSaveBtn];
     
     
-    SecondView = [[UIView alloc]initWithFrame:CGRectMake(0, Device_Height-399, Device_Wdith, 330)];
+    SecondView = [[UIView alloc]initWithFrame:CGRectMake(0, Device_Height-449, Device_Wdith, 400)];
     [SecondView setBackgroundColor:[UIColor whiteColor]];
     //    [PopView setAlpha:0.2];
 //    SecondView.center = PopView.center;
@@ -725,10 +792,10 @@
     Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 210, Device_Wdith-60, 1.5)];
     
     Lbl.backgroundColor = [UIColor colorWithRed:(float)204/255.0 green:(float)204/255.0 blue:(float)204/255.0 alpha:1.0f];
-    [SecondView addSubview:Lbl];
+//    [SecondView addSubview:Lbl];
     
     
-    Secondslider = [[UISlider alloc] initWithFrame:CGRectMake(40, 221.5, Device_Wdith-160, 20)];
+    Secondslider = [[UISlider alloc] initWithFrame:CGRectMake(40, 275.5, Device_Wdith-80, 20)];
     Secondslider.minimumValue = 0;
     Secondslider.maximumValue = 100;
     Secondslider.minimumTrackTintColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
@@ -753,13 +820,13 @@
     //------------
     
     
-    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 255, Device_Wdith-60, 1.5)];
+    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 300, Device_Wdith-60, 1.5)];
     
     Lbl.backgroundColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
     [SecondView addSubview:Lbl];
     
     
-    FirstEventSaveBtn = [[UIButton alloc]initWithFrame:CGRectMake(30+(Device_Wdith-60)/4, 276.5, (Device_Wdith-60)/2, 40)];
+    FirstEventSaveBtn = [[UIButton alloc]initWithFrame:CGRectMake(30+(Device_Wdith-60)/4, 310.5, (Device_Wdith-60)/2, 40)];
     
     [FirstEventSaveBtn setBackgroundColor:[UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f]];
     [FirstEventSaveBtn setTitle:@"OK" forState:UIControlStateNormal];
@@ -774,7 +841,7 @@
     
     
     //==============
-    ThirdView = [[UIView alloc]initWithFrame:CGRectMake(0, Device_Height-399, Device_Wdith, 330)];
+    ThirdView = [[UIView alloc]initWithFrame:CGRectMake(0, Device_Height-449, Device_Wdith, 400)];
     [ThirdView setBackgroundColor:[UIColor whiteColor]];
     //    [PopView setAlpha:0.2];
 //    ThirdView.center = PopView.center;
@@ -827,10 +894,10 @@
     Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 210, Device_Wdith-60, 1.5)];
     
     Lbl.backgroundColor = [UIColor colorWithRed:(float)204/255.0 green:(float)204/255.0 blue:(float)204/255.0 alpha:1.0f];
-    [ThirdView addSubview:Lbl];
+//    [ThirdView addSubview:Lbl];
     
     //---
-    Thirdslider = [[UISlider alloc] initWithFrame:CGRectMake(40, 221.5, Device_Wdith-160, 20)];
+    Thirdslider = [[UISlider alloc] initWithFrame:CGRectMake(40, 275.5, Device_Wdith-80, 20)];
     Thirdslider.minimumValue = 0;
     Thirdslider.maximumValue = 100;
     Thirdslider.minimumTrackTintColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
@@ -857,13 +924,13 @@
     
    
     
-    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 255, Device_Wdith-60, 1.5)];
+    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 300, Device_Wdith-60, 1.5)];
     
     Lbl.backgroundColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
     [ThirdView addSubview:Lbl];
     
     
-    SecondEventSaveBtn = [[UIButton alloc]initWithFrame:CGRectMake(30+(Device_Wdith-60)/4, 276.5, (Device_Wdith-60)/2, 40)];
+    SecondEventSaveBtn = [[UIButton alloc]initWithFrame:CGRectMake(30+(Device_Wdith-60)/4, 310.5, (Device_Wdith-60)/2, 40)];
     
     [SecondEventSaveBtn setBackgroundColor:[UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f]];
     [SecondEventSaveBtn setTitle:@"OK" forState:UIControlStateNormal];
@@ -915,7 +982,20 @@
     FourthView.hidden = YES;
     FristPicker.hidden = YES;
     FristdatePicker.hidden = YES;
+    
+    
 }
+//更新timeLaber时间
+
+- (void)reloadDeviceTime{
+
+    NSDictionary * temp = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%d",9],@"index", nil];
+    
+    [self readRequest:2 requestDic:temp currPeripheral:self.currPeripheral characteristicArray:mydelegate.characteristics delegate:self Baby:self->baby callFrom:PreviewRead];
+    
+}
+
+
 #pragma mark-
 #pragma mark--页面信息处理
 
@@ -1118,6 +1198,13 @@
     self.currPeripheral = mydelegate.currPeripheral;
     self->baby  = mydelegate.baby;
     self.characteristic = [mydelegate.characteristics objectAtIndex:1];
+
+#pragma mark time
+    
+    [self reloadDeviceTime];
+    
+    NSTimer * tm = [NSTimer scheduledTimerWithTimeInterval:10.0f target:self selector:@selector(reloadDeviceTime) userInfo:nil repeats:YES];
+    
 }
 
 
@@ -1325,7 +1412,7 @@
 #pragma mark UIPickerViewDelegate methods
 - (CGFloat)pickerView:(UIPickerView *)pickerView rowHeightForComponent:(NSInteger)component
 {
-    return 60.0f;
+    return 20.0f;
 }
 - (CGFloat)pickerView:(UIPickerView *)pickerView widthForComponent:(NSInteger)component
 {
@@ -2368,4 +2455,111 @@
     
     deviceNameTxt.text = [userdefaults objectForKey:@"DeviceName"];
 }
+
+
+-(void)resultStr:(CBCharacteristic *)characteristics index:(int)index{
+    
+    if (index == TimeRead) {
+        [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"获取到日期信息，数据为%@",characteristics.value]];
+        NSLog(@"获取到日期信息，数据为%@",characteristics.value);
+        NSString * year,* month,* day,* hour,* minute,* second;
+        NSData * data = characteristics.value;
+//        Byte *bytee = (Byte *)[data bytes];
+        //遍历内容长度
+        unsigned char rsp[20];
+        [characteristics.value getBytes:&rsp length:20];
+
+        NSLog(@"%s  %@",rsp,data);
+        NSString * lengthStr = nil;
+        // 将值转成16进制
+        NSString *newStr;
+        for(int i= 12; i<sizeof(rsp);i++)
+        {
+            newStr = [NSString stringWithFormat:@"%x",rsp[i]&0xff];///16进制数
+            if([newStr length]==1)
+                lengthStr = [NSString stringWithFormat:@"0%@",newStr];
+            else
+                lengthStr = [NSString stringWithFormat:@"%@",newStr];
+            
+            
+            //转换类型
+            const char *swtr = [lengthStr cStringUsingEncoding:NSASCIIStringEncoding];
+            int  nResult=(int)strtol(swtr,NULL,16) ;
+            switch (i - 8) {
+                case 4:
+                    year = [NSString stringWithFormat:@"%d",nResult+2000];
+                    break;
+                case 5:
+                    month = nResult>9?[NSString stringWithFormat:@"%d",nResult]:[NSString stringWithFormat:@"0%d",nResult];
+                    break;
+                case 6:
+                    day = nResult>9?[NSString stringWithFormat:@"%d",nResult]:[NSString stringWithFormat:@"0%d",nResult];
+                    break;
+                case 7:
+                    hour = nResult>9?[NSString stringWithFormat:@"%d",nResult]:[NSString stringWithFormat:@"0%d",nResult];
+                    break;
+                case 8:
+                    minute = nResult>9?[NSString stringWithFormat:@"%d",nResult]:[NSString stringWithFormat:@"0%d",nResult];
+                    break;
+                case 9:
+                    second = nResult>9?[NSString stringWithFormat:@"%d",nResult]:[NSString stringWithFormat:@"0%d",nResult];
+                    break;
+                default:
+                    break;
+            }
+            NSString * deviceDate = [NSString stringWithFormat:@"%@-%@-%@ %@:%@",year,month,day,hour,minute];
+            
+            
+            NSLog(@"deviceTime是+++++++++++++%@++++++++++++++++++++++",deviceDate);
+            
+            timeLabel.text = deviceDate;
+//            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+//            
+//            [dateFormatter setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
+//            
+//            NSDate *destDate= [dateFormatter dateFromString:deviceDate];
+//            
+//            
+//            NSTimeInterval late1=[destDate timeIntervalSince1970]*1;
+//            
+//            
+//            
+//            NSDate *d2=[NSDate date];
+//            
+//            NSTimeInterval late2=[d2 timeIntervalSince1970]*1;
+//            NSTimeInterval cha=late2-late1;
+//            int min = (int)cha/60%60;
+//            DateLbl.text =  [dateFormatter stringFromDate:d2];
+//            if (min>1) {
+//                NSArray * array1 =  [[dateFormatter stringFromDate:d2] componentsSeparatedByString:@" "];
+//                NSArray * array2 = [[array1 objectAtIndex:0]componentsSeparatedByString:@":"];
+//                NSArray * array3 = [[array1 objectAtIndex:1]componentsSeparatedByString:@":"];
+//                
+//                
+//                NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+//                
+//                NSDateComponents *comps = [[NSDateComponents alloc] init];
+//                NSInteger unitFlags = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | NSWeekdayCalendarUnit |
+//                NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
+//                
+//                comps = [calendar components:unitFlags fromDate:d2];
+//                int weeknum = (int)[comps weekday];
+//                if(weeknum ==1)
+//                {
+//                    weeknum = 7;
+//                }
+//                else
+//                {
+//                    weeknum--;
+//                }
+//                NSDictionary * temp = [NSDictionary dictionaryWithObjectsAndKeys:@"0",@"index",[array2 objectAtIndex:0],@"value1",[array2 objectAtIndex:1],@"value2",[array2 objectAtIndex:2],@"value3",weeknum,@"value4",[array3 objectAtIndex:0],@"value5",[array3 objectAtIndex:1],@"value6",[array3 objectAtIndex:2],@"value7",nil];
+//                [self getRequest:8 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+//            }
+            
+        }
+    }
+
+    
+}
+
 @end

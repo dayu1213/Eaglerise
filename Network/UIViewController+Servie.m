@@ -39,8 +39,7 @@
             if ([[temp objectForKey:@"index"] intValue] == 1 || [[temp objectForKey:@"index"] intValue] ==2) {
                 [[self remoteController] HeartwriteValue:[self writeValueList:[[temp objectForKey:@"index"] intValue]] currPeripheral:currPeripheral characteristic:characteristic delegate:self];
             }
-            else
-            {
+            else            {
             [[self remoteController] writeValue:[self writeValueList:[[temp objectForKey:@"index"] intValue]] currPeripheral:currPeripheral characteristic:characteristic delegate:self];
             }
         }
