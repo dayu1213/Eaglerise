@@ -1142,6 +1142,8 @@ if(index == DeviceTypeRead)
                 [slider setMaximumTrackImage:[UIImage imageNamed:@"filament"] forState:UIControlStateHighlighted];
             }
     
+    NSLog(@"%@",self.selArray);
+    
     return cell;
 }
 

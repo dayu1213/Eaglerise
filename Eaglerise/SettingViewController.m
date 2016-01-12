@@ -46,6 +46,8 @@
     NSString * secondEventStr;
     NSString * trunOffStr;
     NSInteger modeNumber;
+    UILabel * hourLbl;
+    UILabel * minLbl;
     
     
 }
@@ -702,6 +704,23 @@
     FristdatePicker.datePickerMode = UIDatePickerModeTime;
     //把这个控件添加到view中
     [FirstView addSubview:FristdatePicker];
+    
+    hourLbl = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
+    hourLbl.text = @"hour";
+    [hourLbl setTextAlignment:NSTextAlignmentCenter];
+    hourLbl.hidden = YES;
+    hourLbl.center = FristdatePicker.center;
+    [FirstView addSubview:hourLbl];
+    
+    minLbl = [[UILabel alloc] initWithFrame:CGRectMake(Device_Wdith - 80,hourLbl.frame.origin.y, 40, 40)];
+    minLbl.text = @"min";
+    minLbl.hidden = YES;
+    [hourLbl setTextAlignment:NSTextAlignmentRight];
+    [FirstView addSubview:minLbl];
+
+    
+    
+    
     
     FristPicker = [[UIPickerView alloc]initWithFrame:CGRectMake(30, 186, Device_Wdith-60, 90)];
     FristPicker.delegate = self;
@@ -2288,7 +2307,7 @@
     NSString *str=[dateFormatter stringFromDate:selected];
 //
     [SecondEventBtn setTitle:[NSString stringWithFormat:@"At %@ to %@",str,ThirdLbl.text] forState:UIControlStateNormal];
-    [SecondEventBtn setTitle:[NSString stringWithFormat:@"%@ %@",str,ThirdLbl.text] forState:UIControlStateNormal];
+    [SecondEventBtn setTitle:[NSString stringWithFormat:@"At %@ to %@",str,ThirdLbl.text] forState:UIControlStateNormal];
     SecondEventBtn.titleLabel.font = [UIFont systemFontOfSize:FONTSIZE];
     PopView.hidden = YES;
     
@@ -2323,6 +2342,9 @@
 
 -(void)ExactlyAction:(id)sender
 {
+    hourLbl.hidden = YES;
+    minLbl.hidden = YES;
+
     FristPicker.hidden = YES;
     FristdatePicker.hidden = YES;
     ivImageV.frame = CGRectMake(Device_Wdith-66, 69.5, 32, 20);
@@ -2337,8 +2359,14 @@
 
 }
 
+
+#pragma mark AfterBtn hide no
 -(void)AfterAction:(id)sender
 {
+    
+    hourLbl.hidden = NO;
+    minLbl.hidden = NO;
+    
      MODE = 1;
     if (onOrOff) {
         FristPicker.hidden = NO;
@@ -2383,6 +2411,9 @@
 
 -(void)SpecificAction:(id)sender
 {MODE = 2;
+    hourLbl.hidden = YES;
+    minLbl.hidden = YES;
+
     if (onOrOff) {
         FristPicker.hidden = NO;
         FristdatePicker.hidden = YES;
@@ -2487,7 +2518,7 @@
         }
 
         
-        [TurnOnBtn setTitle:[NSString stringWithFormat:@"At  %d:%@  to %@%%",h,[[temp copy] objectForKey:@"value6"],[[temp copy] objectForKey:@"value4"]] forState:UIControlStateNormal];
+//        [TurnOnBtn setTitle:[NSString stringWithFormat:@"At  %d:%@  to %@%%",h,[[temp copy] objectForKey:@"value6"],[[temp copy] objectForKey:@"value4"]] forState:UIControlStateNormal];
         full = YES;
     }
     else
