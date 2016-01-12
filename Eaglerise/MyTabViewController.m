@@ -103,8 +103,17 @@
     [RefreshBtn setTitleColor:wordColor forState:UIControlStateHighlighted];
     [RefreshBtn addTarget:self action:@selector(RefreshAction) forControlEvents:UIControlEventTouchUpInside];
     [RefreshBtn.titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
-    [bgView addSubview:RefreshBtn];
+//    [bgView addSubview:RefreshBtn];
     
+    UIButton * DisconnectBtn = [[UIButton alloc] initWithFrame:CGRectMake(30, 20, 55, 34)];
+    [DisconnectBtn setTitleColor:wordSelColor forState:UIControlStateNormal];
+    [DisconnectBtn setTitleColor:wordColor forState:UIControlStateHighlighted];
+    [DisconnectBtn setTitle:@"cancle" forState:UIControlStateNormal];
+
+    [DisconnectBtn addTarget:self action:@selector(DisconnectBtnClick) forControlEvents:UIControlEventTouchUpInside];
+    [DisconnectBtn.titleLabel setFont:[UIFont boldSystemFontOfSize:16]];
+    [bgView addSubview:DisconnectBtn];
+
     
     Lbl = [[UILabel alloc]initWithFrame:CGRectMake(0, 52.5, Device_Wdith, 1.5)];
     
@@ -252,6 +261,7 @@
     OverBtn.tag=106;
     [self.view addSubview:OverBtn];
     [self.view bringSubviewToFront:_contentSView];
+#pragma mark 隐藏界面
 //    _contentSView.frame=CGRectMake(0, 54, Device_Wdith, Device_Height-34);
 //    [_contentSView setContentSize: CGSizeMake(Device_Wdith*4, Device_Height-35)];
     
@@ -405,6 +415,13 @@
     [self.contentSView scrollRectToVisible:CGRectMake(Device_Wdith * num, 0, Device_Wdith, Device_Height-44) animated:YES];
     
     
+    if (tempBtn.tag != 106) {
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"closeScanView" object:nil];
+        
+    }
+    
+    
 }
 //连接硬件设备
 -(void)OthertabAction:(NSNotification *)notification
@@ -431,21 +448,34 @@
     [self.contentSView scrollRectToVisible:CGRectMake(Device_Wdith * num, 0, Device_Wdith, Device_Height-44) animated:YES];
     NSDictionary * temp = notification.userInfo;
     
+    
+//    NSLog(@"%@",temp);
+    
     [[NSNotificationCenter defaultCenter] postNotificationName:@"ld" object:self userInfo:[temp copy]];
     
     dataView = [[UIView alloc] initWithFrame:self.view.frame];
     
-    UILabel * label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, Device_Wdith, 200)];
+    UILabel * label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, Device_Wdith, 40)];
     
-    label.text = @"Are connected, please wait a moment";
+    label.text = @"Are connecting, please wait a moment";
     label.center = self.view.center;
+    label.textColor = [UIColor blackColor];
     [label setTextAlignment:NSTextAlignmentCenter];
     [label setFont:[UIFont systemFontOfSize:14]];
     [dataView addSubview:label];
-    dataView.backgroundColor = [UIColor lightGrayColor];
+    dataView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:dataView];
     
-    [self performSelector:@selector(moveView) withObject:nil afterDelay:5.0f];
+    UIActivityIndicatorView * aiv = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    aiv.center = CGPointMake(label.center.x, label.center.y - 40);
+    aiv.color = [UIColor blueColor];
+    [aiv startAnimating];
+    
+    [dataView addSubview:aiv];
+    
+    
+    
+    [self performSelector:@selector(moveView) withObject:nil afterDelay:10.0f];
     
 }
 
@@ -506,4 +536,12 @@
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:@"Refresh" object:self userInfo:nil];
 }
+//断开设备连接
+- (void)DisconnectBtnClick{
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"DisconnectBtnClick" object:self userInfo:nil];
+
+    
+}
+
 @end

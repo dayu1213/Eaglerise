@@ -208,7 +208,7 @@ static RemoteController *instance;
                        NSString * newStr;
                        if(callFrom == DeviceNameRead ||callFrom == CannelNameRead )
                        {
-                             [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"获取到设备名称信息，数据为%@",characteristics.value]];
+//                             [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"获取到设备名称信息，数据为%@",characteristics.value]];
                            newStr = [NSString stringWithFormat:@"%x",bytes[1]&0xff];///16进制数
                            if([newStr length]==1)
                            {

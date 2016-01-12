@@ -40,7 +40,7 @@
     self = [super init];
     if (self) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadDataAction:) name:@"loadOverView" object:nil];
-        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(closeIt) name:@"closeScanView" object:nil];
         mydelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
         userdefaults = [NSUserDefaults standardUserDefaults];
         
@@ -511,7 +511,7 @@
     //设置设备连接成功的委托,同一个baby对象，使用不同的channel切换委托回调
     
     [baby setBlockOnConnectedAtChannel:channelOnPeropheralView block:^(CBCentralManager *central, CBPeripheral *peripheral) {
-        [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"设备：%@--连接成功",peripheral.name]];
+//        [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"设备：%@--连接成功",peripheral.name]];
     }];
     
     //设置发现设备的Services的委托
@@ -782,7 +782,7 @@
             //转换类型
             swtr = [lengthStr cStringUsingEncoding:NSASCIIStringEncoding];
             nResult=strtol(swtr,NULL,16) ;
-             [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"获取到数据为%@，转为数值：%d",newStr,nResult]];
+//             [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"获取到数据为%@，转为数值：%d",newStr,nResult]];
             [values addObject:@(nResult>100?100:nResult)];
         }
        
@@ -824,4 +824,13 @@
     barChartView.tag = 101;
     [contentSView addSubview:barChartView];
 }
+
+- (void)closeIt{
+
+    if (![okBtn.titleLabel.text isEqualToString:@"Auto Play"]) {
+
+        [self StartAction];
+    }
+}
+
 @end

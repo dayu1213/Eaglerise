@@ -20,6 +20,9 @@
     NSArray *characteristics;
     int indexRow;
     NSUserDefaults *userdefaults;
+    
+    CBPeripheral *peripheralTest;
+    
 }
 @property (nonatomic,strong) UITableView * DeviceTView;
 @property (nonatomic,strong) NSMutableArray * DeviceArray;
@@ -35,6 +38,7 @@
     if (self) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(roadBLEAction:) name:@"roadBLE" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(roadingAction) name:@"Refresh" object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(Disconnect) name:@"DisconnectBtnClick" object:nil];
     
         
     }
@@ -258,9 +262,11 @@
     
     CBPeripheral *peripheral = [peripherals objectAtIndex:indexPath.row];
     
+    peripheralTest = peripheral;
+    
     NSLog(@"你点击了第%d行,选择名字为%@的设备",indexRow,peripheral.name);
     
-    [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"你点击了第%d行,选择名字为%@的设备",indexRow,peripheral.name]];
+//    [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"你点击了第%d行,选择名字为%@的设备",indexRow,peripheral.name]];
 
     CBPeripheral * per = [peripherals objectAtIndex:indexRow];
     NSLog(@"连接到得外设%@",per.name);
@@ -527,6 +533,8 @@
     [baby babyStop];
 
     [baby cancelAllPeripheralsConnection];
+    [baby cancelPeripheralConnection:peripheralTest];
+    
 //    [baby stop];
 //    [indexPaths addObject:indexPath];
     [peripherals removeAllObjects];
@@ -583,5 +591,18 @@
     }
 }
 
+
+//断开连接
+- (void)Disconnect{
+
+    [baby cancelAllPeripheralsConnection];
+    baby = nil;
+    //初始化BabyBluetooth 蓝牙库
+    baby = [BabyBluetooth shareBabyBluetooth];
+    //设置蓝牙委托
+    [self babyDelegate];
+
+
+}
 
 @end

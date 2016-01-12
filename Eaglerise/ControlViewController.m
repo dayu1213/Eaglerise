@@ -40,6 +40,7 @@
     int timerNum;
     BOOL HeartSave;
     bool isUPdate;
+    
 }
 
 @property (nonatomic,strong) UITableView * sliderTView;
@@ -101,7 +102,7 @@
     show = NO;
     ChannelNum = 2;
     timerNum = 20;
-    [SVProgressHUD showInfoWithStatus:@"准备连接设备"];
+//    [SVProgressHUD showInfoWithStatus:@"准备连接设备"];
     self.sliderArray  = [NSMutableArray arrayWithObjects:@"1",@"2",@"3",@"3", nil];
     self.selArray = [NSMutableArray arrayWithObjects:@"on",@"on",@"on",@"on", nil];
 //    self.selArray = [[NSMutableArray alloc]init];
@@ -298,7 +299,7 @@
     //设置设备连接成功的委托,同一个baby对象，使用不同的channel切换委托回调
     
     [baby setBlockOnConnectedAtChannel:channelOnPeropheralView block:^(CBCentralManager *central, CBPeripheral *peripheral) {
-        [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"设备：%@--连接成功",peripheral.name]];
+//        [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"设备：%@--连接成功",peripheral.name]];
     }];
 //    [baby setBlockOnDisconnectAtChannel:channelOnPeropheralView block:^(CBCentralManager *central, CBPeripheral *peripheral, NSError *error) {
 //        [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"设备：%@--断开连接",peripheral.name]];
@@ -447,7 +448,7 @@
 }
 -(void)loadData{
     isUPdate = NO;
-    [SVProgressHUD showInfoWithStatus:@"开始连接设备"];
+//    [SVProgressHUD showInfoWithStatus:@"开始连接设备"];
     baby.having(self.currPeripheral).and.channel(channelOnPeropheralView).then.connectToPeripherals().discoverServices().discoverCharacteristics().readValueForCharacteristic().discoverDescriptorsForCharacteristic().readValueForDescriptors().begin();
     //    baby.connectToPeripheral(self.currPeripheral).begin();
 }
@@ -580,7 +581,7 @@
 {
     if (index == DeviceRead) {
         
-        [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"获取到设备信息，数据为%@",characteristics.value]];
+//        [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"获取到设备信息，数据为%@",characteristics.value]];
         NSLog(@"获取到设备信息，数据为%@",characteristics.value);
         Byte *bytes = (Byte *)[characteristics.value bytes];
         //遍历内容长度
@@ -610,7 +611,7 @@
                 [self.selArray addObject:@"on"];
             }
             mydelegate.channelNum = self.selArray.count;
-            [SVProgressHUD showInfoWithStatus:@"获取到正确地设备信息"];
+//            [SVProgressHUD showInfoWithStatus:@"获取到正确地设备信息"];
             
             NSDictionary * temp = [NSDictionary dictionaryWithObjectsAndKeys:@"12",@"index",nil];
              [self readRequest:2 requestDic:temp currPeripheral:self.currPeripheral characteristicArray:mydelegate.specialPeripheralInfo.characteristics delegate:self Baby:self->baby callFrom:DeviceNameRead];
@@ -618,7 +619,7 @@
         }
     }
     if (index == OutPutRead) {
-        [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"获取到输出信息，数据为%@",characteristics.value]];
+//        [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"获取到输出信息，数据为%@",characteristics.value]];
          NSLog(@"获取到输出信息，数据为%@",characteristics.value);
         Byte *bytes = (Byte *)[characteristics.value bytes];
         //遍历内容长度
@@ -733,7 +734,7 @@
         //转换类型
         const char *swtr2 = [lengthStr2 cStringUsingEncoding:NSASCIIStringEncoding];
         int  nResult2=strtol(swtr2,NULL,16) ;
-        [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"获取到通道名称序列为(%d)，newStr2为：%@",nResult2,newStr2]];
+//        [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"获取到通道名称序列为(%d)，newStr2为：%@",nResult2,newStr2]];
         switch ((nResult2)) {
             case 0:
                 [userdefaults setObject:[Str copy] forKey:@"channel1"];
@@ -775,7 +776,7 @@
         
     }
     if (index == TimeRead) {
-        [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"获取到日期信息，数据为%@",characteristics.value]];
+//        [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"获取到日期信息，数据为%@",characteristics.value]];
         NSLog(@"获取到日期信息，数据为%@",characteristics.value);
         NSString * year,* month,* day,* hour,* minute,* second;
         Byte *bytes = (Byte *)[characteristics.value bytes];
@@ -928,7 +929,7 @@ if(index == DeviceTypeRead)
           
           NSData *adata=[[NSData alloc] initWithBytes:bytesss length:(nResult-1)];
           
-                  [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"获取到通道名称转换前的数据：为%@，转换后的数据，为：%@,名称长度为：%d",adataTest,adata,nResult]];
+//                  [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"获取到通道名称转换前的数据：为%@，转换后的数据，为：%@,名称长度为：%d",adataTest,adata,nResult]];
           NSString* Str = [[NSString alloc] initWithData:adata
                                                 encoding:NSUTF8StringEncoding];
           
