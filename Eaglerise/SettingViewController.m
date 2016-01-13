@@ -172,6 +172,7 @@
 -(void)iv
 {
     pickerArray = [[NSMutableArray alloc]initWithObjects:@"channel 1",@"channel 2",@"channel 3",@"channel 4", nil];
+
     
     pickerArray2 = [[NSArray alloc]initWithObjects:@"Nightly",@"SUN/MON",@"MON/TUE",@"TUE/WED",@"WED/THU",@"THU/FRI",@"FRI/SAT",@"SAT/SUN",nil];
     
@@ -237,7 +238,7 @@
     [self.view addSubview:contentSView];
     
     deviceNameTxt=[[UITextField alloc]initWithFrame:CGRectMake(20.0,0.0,Device_Wdith-40, 50)];//创建一个UITextField对象，及设置其位置及大小
-    
+
     deviceNameTxt.contentVerticalAlignment=UIControlContentVerticalAlignmentCenter;//设置其输入内容竖直居中
     
     deviceNameTxt.textAlignment = NSTextAlignmentCenter;
@@ -1690,7 +1691,7 @@
                     h -=12;
                 }
 #pragma mark setbtnTitle
-                [TurnOnBtn setTitle:[NSString stringWithFormat:@"At  %d:%@  to %@%%",h,[[temp copy] objectForKey:@"value6"],[[temp copy] objectForKey:@"value4"]] forState:UIControlStateNormal];
+//                [TurnOnBtn setTitle:[NSString stringWithFormat:@"At  %d:%@  to %@%%",h,[[temp copy] objectForKey:@"value6"],[[temp copy] objectForKey:@"value4"]] forState:UIControlStateNormal];
                 full = YES;
             }
             
@@ -1755,7 +1756,7 @@
                     h -=12;
                 }
                 
-                [SecondEventBtn setTitle:[NSString stringWithFormat:@"At  %d:%@  to %@%%",h,[[temp copy] objectForKey:@"value6"],[[temp copy] objectForKey:@"value4"]] forState:UIControlStateNormal];
+//                [SecondEventBtn setTitle:[NSString stringWithFormat:@"At  %d:%@  to %@%%",h,[[temp copy] objectForKey:@"value6"],[[temp copy] objectForKey:@"value4"]] forState:UIControlStateNormal];
                 full = YES;
             }
             else
@@ -2180,8 +2181,8 @@
         else if (MODE == 1)
         {
 //            [TurnOnBtn setTitle:[NSString stringWithFormat:@"At  %@:%@  to %@",[hour intValue]<10?[NSString stringWithFormat:@"0%@",hour]:hour,[second intValue]<10?[NSString stringWithFormat:@"0%@",second]:second,FristLbl.text] forState:UIControlStateNormal];
-            [TurnOnBtn setTitle:[NSString stringWithFormat:@"At%@:%@After Sunset to %@",[hour intValue]<10?[NSString stringWithFormat:@"0%@",hour]:hour,[second intValue]<10?[NSString stringWithFormat:@"0%@",second]:second,FristLbl.text] forState:UIControlStateNormal];
-            TurnOnBtn.titleLabel.font = [UIFont systemFontOfSize:FONTSIZE];
+            [TurnOnBtn setTitle:[NSString stringWithFormat:@"After Sunset to %@",FristLbl.text] forState:UIControlStateNormal];
+//            TurnOnBtn.titleLabel.font = [UIFont systemFontOfSize:FONTSIZE];
 
             
         }else if (MODE == 2){
@@ -2193,7 +2194,7 @@
 
             [TurnOnBtn setTitle:[NSString stringWithFormat:@"At %@ to %@",str,FristLbl.text] forState:UIControlStateNormal];
 
-            TurnOnBtn.titleLabel.font = [UIFont systemFontOfSize:FONTSIZE];
+//            TurnOnBtn.titleLabel.font = [UIFont systemFontOfSize:FONTSIZE];
 
             
         }
@@ -2264,12 +2265,13 @@
         if (MODE == 0) {
             [TurnOffBtn setTitle:[NSString stringWithFormat:@"At 00:00 to %@",FristLbl.text] forState:UIControlStateNormal];
             [TurnOffBtn setTitle:@"Exactly at Sunrise" forState:UIControlStateNormal];
-            TurnOffBtn.titleLabel.font = [UIFont systemFontOfSize:FONTSIZE];
+//            TurnOffBtn.titleLabel.font = [UIFont systemFontOfSize:FONTSIZE];
+            
         }
         else if(MODE == 1)
         {
             [TurnOffBtn setTitle:[NSString stringWithFormat:@"At %@:%@ to %@",[hour4 intValue]<10?[NSString stringWithFormat:@"0%@",hour4]:hour4,[second4 intValue]<10?[NSString stringWithFormat:@"0%@",second4]:second4,FristLbl.text] forState:UIControlStateNormal];
-            [TurnOffBtn setTitle:[NSString stringWithFormat:@"At %@:%@ After Sunrise",[hour4 intValue]<10?[NSString stringWithFormat:@"0%@",hour4]:hour4,[second4 intValue]<10?[NSString stringWithFormat:@"0%@",second4]:second4] forState:UIControlStateNormal];
+            [TurnOffBtn setTitle:[NSString stringWithFormat:@"After Sunrise"] forState:UIControlStateNormal];
             TurnOffBtn.titleLabel.font = [UIFont systemFontOfSize:FONTSIZE];
 
         }
@@ -2278,7 +2280,7 @@
 //            [TurnOffBtn setTitle:[NSString stringWithFormat:@"At  %@:%@  to %@",[hour4 intValue]<10?[NSString stringWithFormat:@"0%@",hour4]:hour4,[second4 intValue]<10?[NSString stringWithFormat:@"0%@",second4]:second4,FristLbl.text] forState:UIControlStateNormal];
             [TurnOffBtn setTitle:[NSString stringWithFormat:@"At %@ to %@",str,FristLbl.text] forState:UIControlStateNormal];
             [TurnOffBtn setTitle:[NSString stringWithFormat:@"At %@",str] forState:UIControlStateNormal];
-            TurnOffBtn.titleLabel.font = [UIFont systemFontOfSize:FONTSIZE];
+//            TurnOffBtn.titleLabel.font = [UIFont systemFontOfSize:FONTSIZE];
 
             
         }
@@ -2322,7 +2324,7 @@
 //
     [FirstEventBtn setTitle:[NSString stringWithFormat:@"At %@ to %@",str,SecondLbl.text] forState:UIControlStateNormal];
     [FirstEventBtn setTitle:[NSString stringWithFormat:@"At %@ to %@",str,SecondLbl.text] forState:UIControlStateNormal];
-    FirstEventBtn.titleLabel.font = [UIFont systemFontOfSize:FONTSIZE];
+//    FirstEventBtn.titleLabel.font = [UIFont systemFontOfSize:FONTSIZE];
     
     PopView.hidden = YES;
     
@@ -2363,7 +2365,7 @@
 //
     [SecondEventBtn setTitle:[NSString stringWithFormat:@"At %@ to %@",str,ThirdLbl.text] forState:UIControlStateNormal];
     [SecondEventBtn setTitle:[NSString stringWithFormat:@"At %@ to %@",str,ThirdLbl.text] forState:UIControlStateNormal];
-    SecondEventBtn.titleLabel.font = [UIFont systemFontOfSize:FONTSIZE];
+//    SecondEventBtn.titleLabel.font = [UIFont systemFontOfSize:FONTSIZE];
     PopView.hidden = YES;
     
 //    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
