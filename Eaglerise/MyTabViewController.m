@@ -87,7 +87,7 @@
     bgView.backgroundColor =[UIColor colorWithRed:(float)253/255.0 green:(float)253/255.0 blue:(float)253/255.0 alpha:1.0f];
     [self.view addSubview:bgView];
     UILabel * Lbl = [[UILabel alloc]initWithFrame:CGRectMake(0, 20, Device_Wdith, 34)];
-    Lbl.text = @"伊戈尔智能控制";
+    Lbl.text = @"Eaglerise";
     Lbl.font = [UIFont boldSystemFontOfSize:18];
     Lbl.backgroundColor = [UIColor colorWithRed:(float)253/255.0 green:(float)253/255.0 blue:(float)253/255.0 alpha:1.0f];
     Lbl.textColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
@@ -262,8 +262,8 @@
     [self.view addSubview:OverBtn];
     [self.view bringSubviewToFront:_contentSView];
 #pragma mark 隐藏界面
-//    _contentSView.frame=CGRectMake(0, 54, Device_Wdith, Device_Height-34);
-//    [_contentSView setContentSize: CGSizeMake(Device_Wdith*4, Device_Height-35)];
+    _contentSView.frame=CGRectMake(0, 54, Device_Wdith, Device_Height-34);
+    [_contentSView setContentSize: CGSizeMake(Device_Wdith*4, Device_Height-35)];
     
 }
 #pragma  mark--
@@ -457,7 +457,7 @@
     
     UILabel * label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, Device_Wdith, 40)];
     
-    label.text = @"Are connecting, please wait a moment";
+    label.text = @"Are connecting, please wait a moment...";
     label.center = self.view.center;
     label.textColor = [UIColor blackColor];
     [label setTextAlignment:NSTextAlignmentCenter];

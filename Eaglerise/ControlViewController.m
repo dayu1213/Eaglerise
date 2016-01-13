@@ -66,6 +66,7 @@
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadTable) name:@"loadControlTable" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateDeviceName) name:@"updateDeviceName" object:nil];
+//        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(Disconnect) name:@"DisconnectBtnClick" object:nil];
 
     }
     return self;
@@ -104,7 +105,7 @@
     timerNum = 20;
 //    [SVProgressHUD showInfoWithStatus:@"准备连接设备"];
     self.sliderArray  = [NSMutableArray arrayWithObjects:@"1",@"2",@"3",@"3", nil];
-    self.selArray = [NSMutableArray arrayWithObjects:@"on",@"on",@"on",@"on", nil];
+    self.selArray = [NSMutableArray arrayWithObjects:@"on",@"on",@"on", nil];
 //    self.selArray = [[NSMutableArray alloc]init];
 
     userdefaults = [NSUserDefaults standardUserDefaults];
@@ -579,6 +580,7 @@
 
 -(void)resultStr:(CBCharacteristic *)characteristics index:(int)index
 {
+    
     if (index == DeviceRead) {
         
 //        [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"获取到设备信息，数据为%@",characteristics.value]];
@@ -1246,7 +1248,7 @@ if(index == DeviceTypeRead)
 //    }
     timerNum++;
 }
-
+/*
 -(void) switchAction:(id)sender
 {
     
@@ -1357,10 +1359,121 @@ if(index == DeviceTypeRead)
     }
     
     //读取服务
-   
+    [sliderTView reloadData];
+
 
 //    UISwitch * switchw = (UISwitch *)sender;
 }
+ */
+ 
+
+
+-(void) switchAction:(id)sender
+{
+    
+    UISwitch * switchw = (UISwitch *)sender;
+    long num = 0;
+    
+    if (switchw == switchView1&& self.services.count>0) {
+        self.characteristic = [[[self.services objectAtIndex:0] characteristics]objectAtIndex:1];
+        
+        if (switchw.on) {
+            
+            self.selArray = [NSMutableArray arrayWithObjects:@"on",@"on",@"on", nil];
+            allTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(allOnAction:) userInfo:nil repeats:YES];
+        }
+        else
+        {
+            self.selArray = [NSMutableArray arrayWithObjects:@"off",@"off",@"off", nil];
+            allTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(allOffAction:) userInfo:nil repeats:YES];
+            
+        }
+        
+        
+        
+    }
+    else if (switchw == switchView2)
+    {
+        
+        if (switchw.on) {
+            
+            //            PopView.hidden = NO;
+            actionSheet = [[UIActionSheet alloc]
+                           initWithTitle:@"select"
+                           delegate:self
+                           cancelButtonTitle:@"Cancel"
+                           destructiveButtonTitle:nil
+                           otherButtonTitles:nil];
+            
+            
+            for (int i = 0; i< pickerArray.count; i++) {
+                [actionSheet addButtonWithTitle:[pickerArray objectAtIndex:i] ];
+                
+            }
+            actionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+            [actionSheet showInView:self.view];
+            
+        }
+        else
+        {
+            //            PopView.hidden = YES;
+            if(self.currPeripheral != nil &&self.characteristic != nil)
+            {
+                //         num = switchw.tag - 1000;
+                num = 1;
+                self.characteristic = [[[self.services objectAtIndex:0] characteristics]objectAtIndex:num];
+                //            baby.channel(channelOnPeropheralView).characteristicDetails(self.currPeripheral,self.characteristic);
+                [self writeList:0 value:0 value2:0];
+            }
+        }
+        
+    }
+    else
+    {
+        //         num = switchw.tag - 1000;
+        num = 1;
+        self.characteristic = [[[self.services objectAtIndex:0] characteristics]objectAtIndex:num];
+        //        if(self.currPeripheral != nil &&self.characteristic != nil)
+        //        {
+        //            baby.channel(channelOnPeropheralView).characteristicDetails(self.currPeripheral,self.characteristic);}
+        if (switchw.on) {
+            [self.selArray replaceObjectAtIndex:(switchw.tag - 1000) withObject:@"on"];
+            if(self.currPeripheral != nil &&self.characteristic != nil)
+            {
+                //            [self writeOn];
+                if(self.currPeripheral != nil &&self.characteristic != nil)
+                {
+                    //    baby.channel(channelOnPeropheralView).characteristicDetails(self.currPeripheral,self.characteristic);
+                    //                    switchView1.on = YES;
+                    ;
+                    isRead = NO;
+                    NSDictionary * temp = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%d",(int)(switchw.tag - 1000)],@"index",[NSString stringWithFormat:@"%@",[userdefaults objectForKey:[NSString stringWithFormat:@"slider%d",(int)(switchw.tag - 999)]]],@"value", nil];
+                    [self getRequest:3 requestDic:temp  characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+                }
+            }
+        }
+        else
+        {
+            
+            [self.selArray replaceObjectAtIndex:(switchw.tag - 1000) withObject:@"off"];
+            if(self.currPeripheral != nil &&self.characteristic != nil)
+            {
+                //            [self writeOff];
+                isRead = NO;
+                NSDictionary * temp = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%d",(int)(switchw.tag - 1000)],@"index",@"0",@"value", nil];
+                [self getRequest:3 requestDic:temp  characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+                
+            }
+        }
+        [sliderTView reloadData];
+    }
+    
+    //读取服务
+    
+    
+    //    UISwitch * switchw = (UISwitch *)sender;
+}
+
 
 #pragma mark --
 #pragma mark - UIActionSheet
@@ -1574,5 +1687,12 @@ isRead = NO;
     
     DeviceLbl.text = [userdefaults objectForKey:@"DeviceName"];
 }
+
+//断开链接
+- (void)Disconnect{
+
+    
+}
+
 
 @end

@@ -595,12 +595,14 @@
 //断开连接
 - (void)Disconnect{
 
-    [baby cancelAllPeripheralsConnection];
-    baby = nil;
-    //初始化BabyBluetooth 蓝牙库
-    baby = [BabyBluetooth shareBabyBluetooth];
-    //设置蓝牙委托
-    [self babyDelegate];
+//    [baby cancelAllPeripheralsConnection];
+//    baby = nil;
+//    //初始化BabyBluetooth 蓝牙库
+//    baby = [BabyBluetooth shareBabyBluetooth];
+//    //设置蓝牙委托
+//    [self babyDelegate];
+    [baby cancelPeripheralConnection:peripheralTest];
+
 
 
 }

@@ -36,22 +36,6 @@
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Eaglerise/DeviceViewController.m"
-            timestampString = "474282588.213275"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "533"
-            endingLineNumber = "533"
-            landmarkName = "-roadingAction"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.ExceptionBreakpoint">
          <BreakpointContent
             shouldBeEnabled = "Yes"
@@ -90,22 +74,6 @@
             startingLineNumber = "1592"
             endingLineNumber = "1592"
             landmarkName = "-pickerView:numberOfRowsInComponent:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Eaglerise/DeviceViewController.m"
-            timestampString = "474283414.106599"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "600"
-            endingLineNumber = "600"
-            landmarkName = "-Disconnect"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -180,7 +148,7 @@
                   moduleName = "Eaglerise"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/yifangtongda_yuyouliang/Desktop/Eaglerise/Eaglerise/DeviceViewController.m"
-                  timestampString = "474298692.70174"
+                  timestampString = "474346047.78757"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "350"
@@ -195,7 +163,7 @@
                   moduleName = "Eaglerise"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/yifangtongda_yuyouliang/Desktop/Eaglerise/Eaglerise/DeviceViewController.m"
-                  timestampString = "474298692.70211"
+                  timestampString = "474346047.787915"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "350"
@@ -211,14 +179,30 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Eaglerise/ControlViewController.m"
-            timestampString = "474288338.131747"
+            filePath = "Eaglerise/DeviceViewController.m"
+            timestampString = "474341658.40812"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "871"
-            endingLineNumber = "871"
-            landmarkName = "-resultStr:index:"
+            startingLineNumber = "597"
+            endingLineNumber = "597"
+            landmarkName = "-Disconnect"
             landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Eaglerise/ControlViewController.m"
+            timestampString = "474345828.013316"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1358"
+            endingLineNumber = "1358"
+            landmarkName = "@implementation ControlViewController"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
