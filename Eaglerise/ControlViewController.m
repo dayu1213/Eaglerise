@@ -101,6 +101,7 @@
     self.services = [[NSMutableArray alloc]init];
     HeartSave = NO;
     show = NO;
+//    修改
     ChannelNum = 2;
     timerNum = 20;
 //    [SVProgressHUD showInfoWithStatus:@"准备连接设备"];
@@ -1144,7 +1145,12 @@ if(index == DeviceTypeRead)
                 [slider setMaximumTrackImage:[UIImage imageNamed:@"filament"] forState:UIControlStateHighlighted];
             }
     
-    NSLog(@"%@",self.selArray);
+//    NSLog(@"%@",self.selArray);
+//    if (dataView != nil) {
+//        [dataView removeFromSuperview];
+//    }
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"removeView" object:nil];
     
     return cell;
 }
@@ -1376,21 +1382,38 @@ if(index == DeviceTypeRead)
     
     if (switchw == switchView1&& self.services.count>0) {
         self.characteristic = [[[self.services objectAtIndex:0] characteristics]objectAtIndex:1];
-        
+#pragma mark self.selArray 数量更改
+        [self.selArray removeAllObjects];
+
         if (switchw.on) {
             
             self.selArray = [NSMutableArray arrayWithObjects:@"on",@"on",@"on", nil];
+//            for (int i = 0; i < ChannelNum; i ++) {
+//                [self.selArray addObject:@"on"];
+//            }
             allTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(allOnAction:) userInfo:nil repeats:YES];
         }
         else
         {
             self.selArray = [NSMutableArray arrayWithObjects:@"off",@"off",@"off", nil];
+//            [self.selArray addObject:@"off"];
             allTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(allOffAction:) userInfo:nil repeats:YES];
             
         }
         
         
+//        dataView = [[UIView alloc] initWithFrame:self.view.frame];
+//        dataView.backgroundColor = [UIColor blackColor];
+//        UIActivityIndicatorView * aiv = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+//        aiv.center = dataView.center;
+//        aiv.color = [UIColor blueColor];
+//        [aiv startAnimating];
+//        
+//        [dataView addSubview:aiv];
+//        [self.view addSubview:dataView];
+//        [dataView bringSubviewToFront:self.view];
         
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"addDataView" object:nil];
     }
     else if (switchw == switchView2)
     {
@@ -1437,6 +1460,7 @@ if(index == DeviceTypeRead)
         //        {
         //            baby.channel(channelOnPeropheralView).characteristicDetails(self.currPeripheral,self.characteristic);}
         if (switchw.on) {
+            switchView1.on = YES;
             [self.selArray replaceObjectAtIndex:(switchw.tag - 1000) withObject:@"on"];
             if(self.currPeripheral != nil &&self.characteristic != nil)
             {
@@ -1464,6 +1488,14 @@ if(index == DeviceTypeRead)
                 [self getRequest:3 requestDic:temp  characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
                 
             }
+            BOOL isyes = NO;
+//            NSLog(@"%d  %@",self.selArray.count,self.selArray);
+            for (NSString * str in self.selArray) {
+                if ([str isEqualToString:@"on"]) {
+                    isyes = YES;
+                }
+            }
+            switchView1.on = isyes;
         }
         [sliderTView reloadData];
     }

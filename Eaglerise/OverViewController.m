@@ -20,6 +20,7 @@
     NSUserDefaults *userdefaults;
     JXBarChartView *barChartView;
      NSTimer * timer;
+    UIView * dataView;
 }
 @property (nonatomic,strong) UILabel * popLbl;
 @property (nonatomic,strong) UIScrollView * contentSView;
@@ -78,17 +79,61 @@
     //        启动预览
     [self getRequest:5 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
     */
+#pragma mark 首次进来刷新一次
+//    [self StartAction];
+//    [self performSelector:@selector(StartAction) withObject:nil afterDelay:1];
     
-    [self StartAction];
-    [self performSelector:@selector(StartAction) withObject:nil afterDelay:1];
+    
+    if(self.currPeripheral != nil &&self.characteristic != nil)
+    {
+        //    baby.channel(channelOnPeropheralView).characteristicDetails(self.currPeripheral,self.characteristic);
+        
+        int value2 = week+1;
+        if (week == 6) {
+            value2 = 0;
+        }
+        NSDictionary * temp;
+//        if ([okBtn.titleLabel.text isEqualToString:@"Auto Play"]) {
+        
+//            [okBtn setTitle:@"Stop Play" forState:UIControlStateNormal];
+            temp = [NSDictionary dictionaryWithObjectsAndKeys:@"1",@"index",[NSString stringWithFormat:@"%d",time],@"value1",[NSString stringWithFormat:@"%d",value2],@"value2", nil];
+            //        启动预览
+            [self getRequest:5 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+//        [self readAction];
+        
+        sleep(1);
+        NSDictionary * temp1 = [NSDictionary dictionaryWithObjectsAndKeys:@"6",@"index", nil];
+        [self readRequest:2 requestDic:temp1 currPeripheral:self.currPeripheral characteristicArray:mydelegate.characteristics delegate:self Baby:self->baby callFrom:PreviewRead];
+
+//            timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(readAction) userInfo:nil repeats:NO];
+//            WeekSlider.enabled = NO;
+//            slider.enabled = NO;
+//        }
+//        else
+//        {
+//            [timer invalidate];
+//            timer = nil;
+//            [okBtn setTitle:@"Auto Play" forState:UIControlStateNormal];
+//            WeekSlider.enabled = YES;
+//            slider.enabled = YES;
+//        }
+    }
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"addDataView" object:nil];
+
+    [self performSelector:@selector(stopRead) withObject:nil afterDelay:2];
+    
     
 
 }
 
 - (void)stopRead{
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"removeView" object:nil];
 
     NSDictionary * temp = [NSDictionary dictionaryWithObjectsAndKeys:@"7",@"index", nil];
     [self getRequest:2 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+    
 
 }
 
@@ -677,10 +722,13 @@
 
 -(void)resultStr:(CBCharacteristic *)characteristics index:(int)index
 {
+//   移除缓冲
+    [dataView removeFromSuperview];
+
     if (index == PreviewRead) {
         Byte *bytes = (Byte *)[characteristics.value bytes];
         //遍历内容长度
-        
+        NSLog(@"%s",bytes);
         NSString * lengthStr = nil;
         // 将值转成16进制
         NSString *newStr = [NSString stringWithFormat:@"%x",bytes[13]&0xff];///16进制数
@@ -772,7 +820,7 @@
             
             
             [textIndicators addObject:[userdefaults objectForKey:[NSString stringWithFormat:@"channel%d",(i-15)]]];
-            newStr = [NSString stringWithFormat:@"%x",bytes[i]&0xff];///16进制数
+            newStr = [NSString stringWithFormat:@"%x",bytes[i-1]&0xff];///16进制数
             if([newStr length]==1)
                 lengthStr = [NSString stringWithFormat:@"0%@",newStr];
             else

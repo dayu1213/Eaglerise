@@ -576,7 +576,11 @@
     Lbl.backgroundColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
     [contentSView addSubview:Lbl];
 
-    
+#pragma mark 字体设置
+    TurnOnBtn.titleLabel.font = [UIFont systemFontOfSize:FONTSIZE];
+    TurnOffBtn.titleLabel.font = [UIFont systemFontOfSize:FONTSIZE];
+    FirstEventBtn.titleLabel.font = [UIFont systemFontOfSize:FONTSIZE];
+    SecondEventBtn.titleLabel.font = [UIFont systemFontOfSize:FONTSIZE];
     contentSView.contentSize = CGSizeMake(Device_Wdith, 485);
     
     //注册键盘弹起与收起通知
@@ -1695,7 +1699,7 @@
                     [TurnOnBtn setTitle:[NSString stringWithFormat:@"Exactly at Sunset to %@%%",[temp objectForKey:@"value4"]] forState:UIControlStateNormal];
                 }else if (v3 == 1){
                 
-                    [TurnOnBtn setTitle:[NSString stringWithFormat:@"%@:%@ After Sunset to %@%%",v5,v6,v4] forState:UIControlStateNormal];
+                    [TurnOnBtn setTitle:[NSString stringWithFormat:@"After Sunset to %@%%",v4] forState:UIControlStateNormal];
                 }else if (v3 == 2){
                     NSString * strq;
                     if (h>12) {
@@ -1757,7 +1761,7 @@
                     h -=12;
                 }
                 
-                [TurnOffBtn setTitle:[NSString stringWithFormat:@"At  %d:%@  to %@%%",h,[[temp copy] objectForKey:@"value5"],[[temp copy] objectForKey:@"value3"]] forState:UIControlStateNormal];
+                [TurnOffBtn setTitle:[NSString stringWithFormat:@"At %d:%@  to %@%%",h,[[temp copy] objectForKey:@"value5"],[[temp copy] objectForKey:@"value3"]] forState:UIControlStateNormal];
                 full = YES;
             }
             else
@@ -1849,7 +1853,7 @@
                         h -=12;
                     }
                     
-                    [TurnOffBtn setTitle:[NSString stringWithFormat:@"At  %d:%@  to %@%%",h,[[temp copy] objectForKey:@"value5"],[[temp copy] objectForKey:@"value3"]] forState:UIControlStateNormal];
+                    [TurnOffBtn setTitle:[NSString stringWithFormat:@"At %d:%@ to%@%%",h,[[temp copy] objectForKey:@"value5"],[[temp copy] objectForKey:@"value3"]] forState:UIControlStateNormal];
                     full = YES;
                 }
                 else
@@ -2505,7 +2509,7 @@
             [TurnOnBtn setTitle:[NSString stringWithFormat:@"Exactly at Sunset"] forState:UIControlStateNormal];
         }else if (v3 == 1){
             
-            [TurnOnBtn setTitle:[NSString stringWithFormat:@"%@:%@ After Sunset to %@%%",v5,v6,v4] forState:UIControlStateNormal];
+            [TurnOnBtn setTitle:[NSString stringWithFormat:@"After Sunset to %@%%",v4] forState:UIControlStateNormal];
         }else if (v3 == 2){
             NSString * strq;
             if (h>12) {
@@ -2604,7 +2608,7 @@
             [TurnOffBtn setTitle:[NSString stringWithFormat:@"Exactly at Sunrise"] forState:UIControlStateNormal];
         }else if (v3 == 1){
             
-            [TurnOffBtn setTitle:[NSString stringWithFormat:@"%@:%@ After Sunrise to %@%%",v5,v6,v4] forState:UIControlStateNormal];
+            [TurnOffBtn setTitle:[NSString stringWithFormat:@"After Sunrise to %@%%",v4] forState:UIControlStateNormal];
         }else if (v3 == 2){
             NSString * strq;
             if (h>12) {

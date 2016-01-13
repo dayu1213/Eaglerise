@@ -52,11 +52,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Eaglerise/SettingViewController.m"
-            timestampString = "474298503.91289"
+            timestampString = "474362130.361458"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1913"
-            endingLineNumber = "1913"
+            startingLineNumber = "1917"
+            endingLineNumber = "1917"
             landmarkName = "-LoadAction"
             landmarkType = "5">
          </BreakpointContent>
@@ -68,11 +68,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Eaglerise/SettingViewController.m"
-            timestampString = "474298503.91289"
+            timestampString = "474362130.361458"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1592"
-            endingLineNumber = "1592"
+            startingLineNumber = "1596"
+            endingLineNumber = "1596"
             landmarkName = "-pickerView:numberOfRowsInComponent:"
             landmarkType = "5">
          </BreakpointContent>
@@ -148,7 +148,7 @@
                   moduleName = "Eaglerise"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/yifangtongda_yuyouliang/Desktop/Eaglerise/Eaglerise/DeviceViewController.m"
-                  timestampString = "474346047.78757"
+                  timestampString = "474366044.763703"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "350"
@@ -163,7 +163,7 @@
                   moduleName = "Eaglerise"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/yifangtongda_yuyouliang/Desktop/Eaglerise/Eaglerise/DeviceViewController.m"
-                  timestampString = "474346047.787915"
+                  timestampString = "474366044.763986"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "350"
@@ -195,14 +195,14 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Eaglerise/ControlViewController.m"
-            timestampString = "474345828.013316"
+            filePath = "Eaglerise/OverViewController.m"
+            timestampString = "474363690.066175"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1358"
-            endingLineNumber = "1358"
-            landmarkName = "@implementation ControlViewController"
-            landmarkType = "3">
+            startingLineNumber = "108"
+            endingLineNumber = "108"
+            landmarkName = "-overViewData"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

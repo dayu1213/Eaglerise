@@ -50,6 +50,9 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(OthertabAction:) name:@"tabAction" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(Othertab2Action:) name:@"tab2Action" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(DisconnectAction:) name:@"Disconnect" object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(addviewOnView) name:@"addDataView" object:nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moveView) name:@"removeView" object:nil];
     }
     return self;
 }
@@ -262,8 +265,8 @@
     [self.view addSubview:OverBtn];
     [self.view bringSubviewToFront:_contentSView];
 #pragma mark 隐藏界面
-    _contentSView.frame=CGRectMake(0, 54, Device_Wdith, Device_Height-34);
-    [_contentSView setContentSize: CGSizeMake(Device_Wdith*4, Device_Height-35)];
+//    _contentSView.frame=CGRectMake(0, 54, Device_Wdith, Device_Height-34);
+//    [_contentSView setContentSize: CGSizeMake(Device_Wdith*4, Device_Height-35)];
     
 }
 #pragma  mark--
@@ -453,6 +456,35 @@
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"ld" object:self userInfo:[temp copy]];
     
+//    dataView = [[UIView alloc] initWithFrame:self.view.frame];
+//    
+//    UILabel * label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, Device_Wdith, 40)];
+//    
+//    label.text = @"Are connecting, please wait a moment...";
+//    label.center = self.view.center;
+//    label.textColor = [UIColor blackColor];
+//    [label setTextAlignment:NSTextAlignmentCenter];
+//    [label setFont:[UIFont systemFontOfSize:14]];
+////    [dataView addSubview:label];
+//    dataView.backgroundColor = [UIColor clearColor];
+//    [self.view addSubview:dataView];
+//    
+//    UIActivityIndicatorView * aiv = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+//    aiv.center = CGPointMake(label.center.x, label.center.y - 40);
+//    aiv.color = [UIColor blueColor];
+//    [aiv startAnimating];
+//    
+//    [dataView addSubview:aiv];
+    
+    
+    [self creatUIAview];
+    [self performSelector:@selector(moveView) withObject:nil afterDelay:10.0f];
+    
+}
+
+- (void)creatUIAview{
+
+    
     dataView = [[UIView alloc] initWithFrame:self.view.frame];
     
     UILabel * label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, Device_Wdith, 40)];
@@ -462,7 +494,7 @@
     label.textColor = [UIColor blackColor];
     [label setTextAlignment:NSTextAlignmentCenter];
     [label setFont:[UIFont systemFontOfSize:14]];
-    [dataView addSubview:label];
+    //    [dataView addSubview:label];
     dataView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:dataView];
     
@@ -472,11 +504,12 @@
     [aiv startAnimating];
     
     [dataView addSubview:aiv];
-    
-    
-    
-    [self performSelector:@selector(moveView) withObject:nil afterDelay:10.0f];
-    
+
+}
+
+- (void)addviewOnView{
+
+    [self creatUIAview];
 }
 
 - (void)moveView{
