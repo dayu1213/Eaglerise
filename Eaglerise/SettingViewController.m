@@ -1478,7 +1478,9 @@
             else if (MODE ==2)
             {
                 if (onOrOff) {
-                    pTitle = [pickerArray3 objectAtIndex:row];
+//                    pTitle = [pickerArray3 objectAtIndex:row];
+                    pTitle = [pickerArray6 objectAtIndex:row];
+#pragma mark turnOnShowStyle
                 }
                 else
                 {
@@ -1514,7 +1516,10 @@
                 else if (MODE ==2)
                 {
                     if (onOrOff) {
-                        hour = [pickerArray3 objectAtIndex:row];
+#pragma mark showStyle
+//                        hour = [pickerArray3 objectAtIndex:row];
+                        hour = [pickerArray6 objectAtIndex:row];
+
                     }
                     else
                     {
@@ -1540,7 +1545,10 @@
                 else if (MODE ==2)
                 {
                     if (onOrOff) {
-                        hour4 = [pickerArray3 objectAtIndex:row];
+#pragma mark shoeStyle
+//                        hour4 = [pickerArray3 objectAtIndex:row];
+                        hour4 = [pickerArray6 objectAtIndex:row];
+
                     }
                     else
                     {
@@ -1601,7 +1609,10 @@
                 else if (MODE ==2)
                 {
                     if (onOrOff) {
-                        RCount = [pickerArray3 count];
+#pragma mark showStyle
+//                        RCount = [pickerArray3 count];
+                        RCount = [pickerArray6 count];
+
                     }
                     else
                     {
@@ -1784,7 +1795,7 @@
             if(keys.count>0)
             {
 #pragma mark 这里可会有问题，自己加了一个if判断
-                if (keys.count < buttonIndex - 1) {
+                if (keys.count <= buttonIndex - 1) {
                     return;
                 }
                 setDic = [NSMutableDictionary dictionaryWithDictionary:[channelDic objectForKey:[NSString stringWithFormat:@"%d",channelIndex]]];
@@ -1950,6 +1961,7 @@
     Fristslider.hidden = NO;
     FristLbl.hidden = NO;
 //    isPop = YES;
+    /*
     if(MODE == 0)
     {
         FristPicker.hidden = YES;
@@ -1957,16 +1969,25 @@
     }
     else
     {
-        FristPicker.hidden = NO;
+//        FristPicker.hidden = NO;
         [FristPicker reloadAllComponents];
-        FristdatePicker.hidden = YES;
+//        FristdatePicker.hidden = YES;
+        FristdatePicker.hidden = NO;
+        FristPicker.hidden = YES;
         
         NSInteger row=[FristPicker selectedRowInComponent:0];
         NSInteger row2=[FristPicker selectedRowInComponent:1];
         //然后是获取这个行中的值，就是数组中的值
-        
-        hour=[pickerArray5 objectAtIndex:row];
+#pragma mark showStyle2
+        if (MODE == 1) {
+            hour=[pickerArray5 objectAtIndex:row];
+            second = [pickerArray4 objectAtIndex:row2];
+
+        }else{
+//        hour=[pickerArray3 objectAtIndex:row];
+            hour = [pickerArray6 objectAtIndex:row];
         second = [pickerArray4 objectAtIndex:row2];
+        }
     }
 //    else
 //    {
@@ -1974,6 +1995,30 @@
 //        
 //        FristdatePicker.hidden = NO;
 //    }
+*/
+    if(MODE == 0)
+    {
+        FristPicker.hidden = YES;
+        FristdatePicker.hidden = YES;
+    }
+    else if(MODE == 1)
+    {
+        FristPicker.hidden = NO;
+        [FristPicker reloadAllComponents];
+        FristdatePicker.hidden = YES;
+        NSInteger row=[FristPicker selectedRowInComponent:0];
+        NSInteger row2=[FristPicker selectedRowInComponent:1];
+        //然后是获取这个行中的值，就是数组中的值
+        
+        hour=[pickerArray5 objectAtIndex:row];
+        second = [pickerArray4 objectAtIndex:row2];
+    }
+    else
+    {
+        FristPicker.hidden = YES;
+        
+        FristdatePicker.hidden = NO;
+    }
 
 
 }
@@ -2142,6 +2187,12 @@
         }else if (MODE == 2){
         
             [TurnOnBtn setTitle:[NSString stringWithFormat:@"At%@:%@ to %@",[hour intValue]<10?[NSString stringWithFormat:@"0%@",hour]:hour,[second intValue]<10?[NSString stringWithFormat:@"0%@",second]:second,FristLbl.text] forState:UIControlStateNormal];
+            NSDate *selected = [FristdatePicker date];
+            [dateFormatter setDateFormat:@"hh:mm aa"];
+            NSString *str=[dateFormatter stringFromDate:selected];
+
+            [TurnOnBtn setTitle:[NSString stringWithFormat:@"At %@ to %@",str,FristLbl.text] forState:UIControlStateNormal];
+
             TurnOnBtn.titleLabel.font = [UIFont systemFontOfSize:FONTSIZE];
 
             
@@ -2417,24 +2468,29 @@
 {MODE = 2;
     hourLbl.hidden = YES;
     minLbl.hidden = YES;
-
-    if (onOrOff) {
-        FristPicker.hidden = NO;
-        FristdatePicker.hidden = YES;
-        [FristPicker reloadAllComponents];
-        
-        NSInteger row=[FristPicker selectedRowInComponent:0];
-        NSInteger row2=[FristPicker selectedRowInComponent:1];
-        //然后是获取这个行中的值，就是数组中的值
-        
-        hour=[pickerArray3 objectAtIndex:row];
-        second = [pickerArray4 objectAtIndex:row2];
-    }
-    else
-    {
+#pragma mark specific time showStyle
+//    if (onOrOff) {
+////        FristPicker.hidden = NO;
+////        FristdatePicker.hidden = YES;
+//
+//        
+//        FristPicker.hidden = YES;
+//        FristdatePicker.hidden = NO;
+//        [FristPicker reloadAllComponents];
+//        
+//        NSInteger row=[FristPicker selectedRowInComponent:0];
+//        NSInteger row2=[FristPicker selectedRowInComponent:1];
+//        //然后是获取这个行中的值，就是数组中的值
+//#pragma mark shoeStyle
+////        hour=[pickerArray3 objectAtIndex:row];
+//        hour = [pickerArray6 objectAtIndex:row];
+//        second = [pickerArray4 objectAtIndex:row2];
+//    }
+//    else
+//    {
         FristPicker.hidden = YES;
         FristdatePicker.hidden = NO;
-    }
+//    }
     
     ivImageV.frame = CGRectMake(Device_Wdith-66, 152.5, 32, 20);
     

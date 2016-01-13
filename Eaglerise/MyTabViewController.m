@@ -265,8 +265,8 @@
     [self.view addSubview:OverBtn];
     [self.view bringSubviewToFront:_contentSView];
 #pragma mark 隐藏界面
-//    _contentSView.frame=CGRectMake(0, 54, Device_Wdith, Device_Height-34);
-//    [_contentSView setContentSize: CGSizeMake(Device_Wdith*4, Device_Height-35)];
+    _contentSView.frame=CGRectMake(0, 54, Device_Wdith, Device_Height-34);
+    [_contentSView setContentSize: CGSizeMake(Device_Wdith*4, Device_Height-35)];
     
 }
 #pragma  mark--

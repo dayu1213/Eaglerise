@@ -1229,8 +1229,8 @@ if(index == DeviceTypeRead)
 }
 - (void)startTimer
  {
-//         Hearttimer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(timerFire) userInfo:nil repeats:YES];
-//         [[NSRunLoop currentRunLoop] run];
+         Hearttimer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(timerFire) userInfo:nil repeats:YES];
+//         //[[NSRunLoop currentRunLoop] run];
      }
 - (void)timerFire
 {
@@ -1489,7 +1489,7 @@ if(index == DeviceTypeRead)
                 
             }
             BOOL isyes = NO;
-//            NSLog(@"%d  %@",self.selArray.count,self.selArray);
+            NSLog(@"%d  %@",self.selArray.count,self.selArray);
             for (NSString * str in self.selArray) {
                 if ([str isEqualToString:@"on"]) {
                     isyes = YES;
