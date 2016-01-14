@@ -36,11 +36,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Eaglerise/SettingViewController.m"
-            timestampString = "474384748.017178"
+            timestampString = "474456332.771655"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1625"
-            endingLineNumber = "1625"
+            startingLineNumber = "1673"
+            endingLineNumber = "1673"
             landmarkName = "-pickerView:numberOfRowsInComponent:"
             landmarkType = "5">
          </BreakpointContent>
@@ -116,7 +116,7 @@
                   moduleName = "Eaglerise"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/yifangtongda_yuyouliang/Desktop/Eaglerise/Eaglerise/DeviceViewController.m"
-                  timestampString = "474446523.380213"
+                  timestampString = "474457076.672522"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "350"
@@ -131,7 +131,7 @@
                   moduleName = "Eaglerise"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/yifangtongda_yuyouliang/Desktop/Eaglerise/Eaglerise/DeviceViewController.m"
-                  timestampString = "474446523.380662"
+                  timestampString = "474457076.672969"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "350"
@@ -163,28 +163,12 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Eaglerise/OverViewController.m"
-            timestampString = "474363690.066175"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "108"
-            endingLineNumber = "108"
-            landmarkName = "-overViewData"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "Eaglerise/SettingViewController.m"
-            timestampString = "474384748.017178"
+            timestampString = "474456332.771655"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1543"
-            endingLineNumber = "1543"
+            startingLineNumber = "1591"
+            endingLineNumber = "1591"
             landmarkName = "-pickerView:didSelectRow:inComponent:"
             landmarkType = "5">
          </BreakpointContent>

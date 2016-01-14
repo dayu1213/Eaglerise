@@ -48,6 +48,8 @@
     NSInteger modeNumber;
     UILabel * hourLbl;
     UILabel * minLbl;
+    UISwitch * fristSwitch;
+    UISwitch * secondSwitch;
     
     
 }
@@ -749,7 +751,7 @@
     Lbl.backgroundColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
 //    [FirstView addSubview:Lbl];
     
-    Fristslider = [[UISlider alloc] initWithFrame:CGRectMake(40, 288.5, Device_Wdith-160, 20)];
+    Fristslider = [[UISlider alloc] initWithFrame:CGRectMake(40, 288.5, Device_Wdith-120, 20)];
     Fristslider.minimumValue = 0;
     Fristslider.maximumValue = 100;
     Fristslider.minimumTrackTintColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
@@ -763,7 +765,7 @@
     [FirstView addSubview:Fristslider];
     
     
-    FristLbl = [[UILabel alloc]initWithFrame:CGRectMake(Device_Wdith-110, 278.5, 80, 40)];
+    FristLbl = [[UILabel alloc]initWithFrame:CGRectMake(Device_Wdith-70, 278.5, 80, 40)];
     FristLbl.text = @"0%";
     FristLbl.font = [UIFont boldSystemFontOfSize:16];
     FristLbl.backgroundColor = [UIColor clearColor];
@@ -795,8 +797,8 @@
 //    SecondView.center = PopView.center;
     [PopView addSubview:SecondView];
     
-    
-    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, Device_Wdith, 60)];
+    CGFloat pointX = (Device_Wdith)/2.0f;
+    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, pointX, 60)];
     Lbl.text = @"Frist Event";
     Lbl.font = [UIFont boldSystemFontOfSize:16];
     Lbl.backgroundColor = [UIColor clearColor];
@@ -805,7 +807,30 @@
     
     [SecondView addSubview:Lbl];
     
+#pragma mark 添加按钮1
     
+    UILabel * offLbl = [[UILabel alloc] initWithFrame:CGRectMake(pointX -30, 0, 40, 60)];
+    offLbl.text = @"off";
+    offLbl.font = [UIFont boldSystemFontOfSize:16];
+    offLbl.backgroundColor = [UIColor clearColor];
+    offLbl.textColor = [UIColor colorWithRed:(float)135/255.0 green:(float)135/255.0 blue:(float)135/255.0 alpha:1.0f];
+    offLbl.textAlignment = NSTextAlignmentCenter;
+    [SecondView addSubview:offLbl];
+    
+    fristSwitch  = [[UISwitch alloc] initWithFrame:CGRectMake(pointX + 10, 10, 60, 60)];
+    fristSwitch.on = YES;
+    fristSwitch.onTintColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
+    [fristSwitch addTarget:self action:@selector(fristSwitchHide) forControlEvents:UIControlEventValueChanged];
+    [SecondView addSubview:fristSwitch];
+    
+    UILabel * onLbl2 = [[UILabel alloc] initWithFrame:CGRectMake(pointX + 70, 0, 40, 60)];
+    onLbl2.text = @"on";
+    onLbl2.font = [UIFont boldSystemFontOfSize:16];
+    onLbl2.backgroundColor = [UIColor clearColor];
+    onLbl2.textColor = [UIColor colorWithRed:(float)135/255.0 green:(float)135/255.0 blue:(float)135/255.0 alpha:1.0f];
+    onLbl.textAlignment = NSTextAlignmentCenter;
+    [SecondView addSubview:onLbl2];
+
     
     Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 61.5, Device_Wdith-120, 40)];
     Lbl.text = @"Starting time";
@@ -861,7 +886,7 @@
     [SecondView addSubview:Secondslider];
     
     
-    SecondLbl = [[UILabel alloc]initWithFrame:CGRectMake(Device_Wdith-110, 211.5, 80, 40)];
+    SecondLbl = [[UILabel alloc]initWithFrame:CGRectMake(Device_Wdith-110, 235.5, 80, 40)];
     SecondLbl.text = @"0%";
     SecondLbl.font = [UIFont boldSystemFontOfSize:16];
     SecondLbl.backgroundColor = [UIColor clearColor];
@@ -898,9 +923,32 @@
     //    [PopView setAlpha:0.2];
 //    ThirdView.center = PopView.center;
     [PopView addSubview:ThirdView];
+#pragma mark 添加按钮2
+    
+    UILabel * offLbl2 = [[UILabel alloc] initWithFrame:CGRectMake(pointX -30, 0, 40, 60)];
+    offLbl2.text = @"off";
+    offLbl2.font = [UIFont boldSystemFontOfSize:16];
+    offLbl2.backgroundColor = [UIColor clearColor];
+    offLbl2.textColor = [UIColor colorWithRed:(float)135/255.0 green:(float)135/255.0 blue:(float)135/255.0 alpha:1.0f];
+    offLbl2.textAlignment = NSTextAlignmentCenter;
+    [ThirdView addSubview:offLbl2];
+    
+    secondSwitch  = [[UISwitch alloc] initWithFrame:CGRectMake(pointX + 10, 10, 60, 60)];
+    secondSwitch.on = YES;
+    secondSwitch.onTintColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
+    [secondSwitch addTarget:self action:@selector(secondSwitchHide) forControlEvents:UIControlEventValueChanged];
+    [ThirdView addSubview:secondSwitch];
+    
+    UILabel * onLbl3 = [[UILabel alloc] initWithFrame:CGRectMake(pointX + 70, 0, 40, 60)];
+    onLbl3.text = @"on";
+    onLbl3.font = [UIFont boldSystemFontOfSize:16];
+    onLbl3.backgroundColor = [UIColor clearColor];
+    onLbl3.textColor = [UIColor colorWithRed:(float)135/255.0 green:(float)135/255.0 blue:(float)135/255.0 alpha:1.0f];
+    onLbl.textAlignment = NSTextAlignmentCenter;
+    [ThirdView addSubview:onLbl3];
     
     
-    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, Device_Wdith, 60)];
+    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, pointX, 60)];
     Lbl.text = @"Second Event";
     Lbl.font = [UIFont boldSystemFontOfSize:16];
     Lbl.backgroundColor = [UIColor clearColor];
@@ -963,7 +1011,7 @@
     [ThirdView addSubview:Thirdslider];
     
     
-    ThirdLbl = [[UILabel alloc]initWithFrame:CGRectMake(Device_Wdith-110, 211.5, 80, 40)];
+    ThirdLbl = [[UILabel alloc]initWithFrame:CGRectMake(Device_Wdith-110, 235.5, 80, 40)];
     ThirdLbl.text = @"0%";
     ThirdLbl.font = [UIFont boldSystemFontOfSize:16];
     ThirdLbl.backgroundColor = [UIColor clearColor];
@@ -2397,6 +2445,10 @@
     [self getRequest:7 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
 //    [setDic setObject:temp forKey:@"event1"];
     [setDic setObject:temp forKey:[NSString stringWithFormat:@"%@%d",@"event1",WEEK]];
+    
+    
+
+    
 }
 
 -(void)SecondEventSaveAction
@@ -2437,6 +2489,8 @@
     [self getRequest:7 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
 //    [setDic setObject:temp forKey:@"event2"];
     [setDic setObject:temp forKey:[NSString stringWithFormat:@"%@%d",@"event2",WEEK]];
+    
+    
 }
 
 
@@ -2586,6 +2640,29 @@
 -(void)closeAction
 {
     PopView.hidden = YES;
+    
+    if (!fristSwitch.on) {
+        
+        
+        [FirstEventBtn setTitle:@"disabled" forState:UIControlStateNormal];
+    }else{
+    
+        [FirstEventBtn setTitle:@"unused" forState:UIControlStateNormal];
+
+    }
+
+    if (!secondSwitch.on) {
+        
+        [SecondEventBtn setTitle:@"disabled" forState:UIControlStateNormal];
+        
+    }else{
+        
+        [SecondEventBtn setTitle:@"unused" forState:UIControlStateNormal];
+
+        
+    }
+
+    
 }
 
 -(void)loadMessage:(NSMutableDictionary *)setDics
@@ -2845,6 +2922,54 @@
 //            }
             
         }
+    }
+
+    
+}
+//fristSwitchHide控制
+- (void)fristSwitchHide{
+
+    if (!fristSwitch.on) {
+        SeconddatePicker.hidden = YES;
+        Secondslider.hidden = YES;
+        SecondLbl.hidden = YES;
+        FirstEventSaveBtn.hidden = YES;
+        
+        NSDictionary * temp = [NSDictionary dictionaryWithObjectsAndKeys:@"1",@"index",[NSString stringWithFormat:@"%d",CH-1],@"value1",[NSString stringWithFormat:@"%d",(WEEK==-1?255:WEEK)],@"value2",@"0",@"value3",[NSString stringWithFormat:@"%.0f",Secondslider.value],@"value4",[NSString stringWithFormat:@"%d",[hour2 intValue]],@"value5",[NSString stringWithFormat:@"%d",[second2 intValue]],@"value6", nil];
+        [self getRequest:7 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+
+        
+    }else{
+    
+        SeconddatePicker.hidden = NO;
+        Secondslider.hidden = NO;
+        SecondLbl.hidden = NO;
+        FirstEventSaveBtn.hidden = NO;
+        
+    }
+    
+}
+//secondSwitchHide
+- (void)secondSwitchHide{
+
+    
+    if (!secondSwitch.on) {
+        ThirddatePicker.hidden = YES;
+        Thirdslider.hidden = YES;
+        ThirdLbl.hidden = YES;
+        SecondEventSaveBtn.hidden = YES;
+        
+        NSDictionary * temp = [NSDictionary dictionaryWithObjectsAndKeys:@"2",@"index",[NSString stringWithFormat:@"%d",CH-1],@"value1",[NSString stringWithFormat:@"%d",(WEEK==-1?255:WEEK)],@"value2",@"0",@"value3",[NSString stringWithFormat:@"%.0f",Secondslider.value],@"value4",[NSString stringWithFormat:@"%d",[hour2 intValue]],@"value5",[NSString stringWithFormat:@"%d",[second2 intValue]],@"value6", nil];
+        [self getRequest:7 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+        
+        
+    }else{
+        
+        ThirddatePicker.hidden = NO;
+        Thirdslider.hidden = NO;
+        ThirdLbl.hidden = NO;
+        SecondEventSaveBtn.hidden = NO;
+        
     }
 
     
