@@ -106,6 +106,7 @@
     [RefreshBtn setTitleColor:wordColor forState:UIControlStateHighlighted];
     [RefreshBtn addTarget:self action:@selector(RefreshAction) forControlEvents:UIControlEventTouchUpInside];
     [RefreshBtn.titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
+#pragma mark 刷新按钮
 //    [bgView addSubview:RefreshBtn];
     
     UIButton * DisconnectBtn = [[UIButton alloc] initWithFrame:CGRectMake(30, 20, 55, 34)];
@@ -115,7 +116,8 @@
 
     [DisconnectBtn addTarget:self action:@selector(DisconnectBtnClick) forControlEvents:UIControlEventTouchUpInside];
     [DisconnectBtn.titleLabel setFont:[UIFont boldSystemFontOfSize:16]];
-    [bgView addSubview:DisconnectBtn];
+#pragma mark 断开按钮
+//    [bgView addSubview:DisconnectBtn];
 
     
     Lbl = [[UILabel alloc]initWithFrame:CGRectMake(0, 52.5, Device_Wdith, 1.5)];
@@ -265,8 +267,8 @@
     [self.view addSubview:OverBtn];
     [self.view bringSubviewToFront:_contentSView];
 #pragma mark 隐藏界面
-    _contentSView.frame=CGRectMake(0, 54, Device_Wdith, Device_Height-34);
-    [_contentSView setContentSize: CGSizeMake(Device_Wdith*4, Device_Height-35)];
+//    _contentSView.frame=CGRectMake(0, 54, Device_Wdith, Device_Height-34);
+//    [_contentSView setContentSize: CGSizeMake(Device_Wdith*4, Device_Height-35)];
     
 }
 #pragma  mark--

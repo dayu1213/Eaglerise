@@ -171,7 +171,11 @@
  */
 -(void)iv
 {
-    pickerArray = [[NSMutableArray alloc]initWithObjects:@"channel 1",@"channel 2",@"channel 3",@"channel 4", nil];
+    
+#pragma mark pickerArray更改
+//    pickerArray = [[NSMutableArray alloc]initWithObjects:@"channel 1",@"channel 2",@"channel 3",@"channel 4", nil];
+    pickerArray = [[NSMutableArray alloc]initWithObjects:@"channel 1",@"channel 2",@"channel 3", nil];
+
 
     
     pickerArray2 = [[NSArray alloc]initWithObjects:@"Nightly",@"SUN/MON",@"MON/TUE",@"TUE/WED",@"WED/THU",@"THU/FRI",@"FRI/SAT",@"SAT/SUN",nil];
@@ -216,9 +220,11 @@
     if ([userdefaults objectForKey:@"channel3"]!=nil) {
         [pickerArray replaceObjectAtIndex:2 withObject:[userdefaults objectForKey:@"channel3"]];
     }
-    if ([userdefaults objectForKey:@"channel4"]!=nil) {
-        [pickerArray replaceObjectAtIndex:3 withObject:[userdefaults objectForKey:@"channel4"]];
-    }
+    
+#pragma mark pickerArray
+//    if ([userdefaults objectForKey:@"channel4"]!=nil) {
+//        [pickerArray replaceObjectAtIndex:3 withObject:[userdefaults objectForKey:@"channel4"]];
+//    }
 
 }
 
@@ -606,7 +612,11 @@
         setDic = [NSMutableDictionary dictionaryWithDictionary:[channelDic objectForKey:[NSString stringWithFormat:@"%d",channelIndex]]];
         loadName = [userdefaults objectForKey:@"loadName"];
         [self loadMessage:setDic];
+    }else
+    {
+        channelDic = [[NSMutableDictionary alloc]init];
     }
+
 }
 
 -(void)roadPopView
@@ -1255,23 +1265,33 @@
     
     if (alertView == dialog) {
         if (buttonIndex == 1) {
-            
-            channelDic = [[NSMutableDictionary alloc] init];
-            SettingDic = [[NSMutableDictionary alloc] init];
+#pragma mark 数组重新创建
+//            channelDic = [[NSMutableDictionary alloc] init];
+//            SettingDic = [[NSMutableDictionary alloc] init];
+//            
+//            if ([[[alertView textFieldAtIndex:0].text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length] >0) {
+//                if (setDic != nil) {
+//                    [channelDic setValue:setDic forKey:[NSString stringWithFormat:@"%d",channelIndex]];
+//                    [channelDic setObject:setDic forKey:[NSString stringWithFormat:@"%d",channelIndex]];
+//
+//                }
+//
+//                [SettingDic setValue:channelDic forKey:[alertView textFieldAtIndex:0].text];
+//                [SettingDic setObject:channelDic forKey:[alertView textFieldAtIndex:0].text];
+//                [userdefaults setObject:SettingDic forKey:@"setting"];
+//                [userdefaults setObject:channelDic forKey:@"settinglast"];
+//                
+//                NSLog(@"%@ %@ %@",SettingDic,channelDic,setDic);
             
             if ([[[alertView textFieldAtIndex:0].text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length] >0) {
                 if (setDic != nil) {
                     [channelDic setValue:setDic forKey:[NSString stringWithFormat:@"%d",channelIndex]];
-                    [channelDic setObject:setDic forKey:[NSString stringWithFormat:@"%d",channelIndex]];
-
                 }
-
+                
                 [SettingDic setValue:channelDic forKey:[alertView textFieldAtIndex:0].text];
-                [SettingDic setObject:channelDic forKey:[alertView textFieldAtIndex:0].text];
                 [userdefaults setObject:SettingDic forKey:@"setting"];
                 [userdefaults setObject:channelDic forKey:@"settinglast"];
-                
-                NSLog(@"%@ %@ %@",SettingDic,channelDic,setDic);
+
             }
             else
             {
@@ -1284,7 +1304,7 @@
     else
     {
         if (buttonIndex == 0) {
-            
+            return;
             [channelDic setValue:setDic forKey:[NSString stringWithFormat:@"%d",channelIndex]];
             
             [SettingDic setValue:channelDic forKey:loadName];
@@ -1795,12 +1815,12 @@
             NSArray *keys = [channelDic allKeys];
             if(keys.count>0)
             {
-#pragma mark 这里可会有问题，自己加了一个if判断
-                if (keys.count <= buttonIndex - 1) {
-                    return;
-                }
+//#pragma mark 这里可会有问题，自己加了一个if判断
+//                if (keys.count <= buttonIndex - 1) {
+//                    return;
+//                }
                 setDic = [NSMutableDictionary dictionaryWithDictionary:[channelDic objectForKey:[NSString stringWithFormat:@"%d",channelIndex]]];
-                loadName = [keys objectAtIndex:(buttonIndex-1)];
+//                loadName = [keys objectAtIndex:(buttonIndex-1)];
                 
 //                setDic = [NSMutableDictionary dictionaryWithDictionary:[SettingDic objectForKey:[keys objectAtIndex:(buttonIndex -1)]]];
 //                loadName = [keys objectAtIndex:(buttonIndex -1)];
@@ -1814,8 +1834,31 @@
                         
                         h -=12;
                     }
+#pragma mark 需要修改
                     
-                    [TurnOnBtn setTitle:[NSString stringWithFormat:@"At %d:%@ to %@%%",h,[[temp copy] objectForKey:@"value6"],[[temp copy] objectForKey:@"value4"]] forState:UIControlStateNormal];
+                    NSInteger v3 =  [[temp objectForKey:@"value3"] integerValue];
+                    NSString * v4 = [temp objectForKey:@"value4"];
+                    NSString * v5 = [temp objectForKey:@"value5"];
+                    NSString * v6 = [temp objectForKey:@"value6"];
+                    
+                    if (v3 == 0) {
+                        [TurnOnBtn setTitle:[NSString stringWithFormat:@"Exactly at Sunset to %@%%",[temp objectForKey:@"value4"]] forState:UIControlStateNormal];
+                    }else if (v3 == 1){
+                        
+                        [TurnOnBtn setTitle:[NSString stringWithFormat:@"After Sunset to %@%%",v4] forState:UIControlStateNormal];
+                    }else if (v3 == 2){
+                        NSString * strq;
+                        if (h>12) {
+                            strq = [NSString stringWithFormat:@"%d:%@PM",h-12,v6];
+                        }else{
+                            
+                            strq = [NSString stringWithFormat:@"%d:%@AM",h,v6];
+                        }
+                        [TurnOnBtn setTitle:[NSString stringWithFormat:@"At %@ to %@%%",strq,v4] forState:UIControlStateNormal];
+                    }
+
+                    
+//                    [TurnOnBtn setTitle:[NSString stringWithFormat:@"At %d:%@ to %@%%",h,[[temp copy] objectForKey:@"value6"],[[temp copy] objectForKey:@"value4"]] forState:UIControlStateNormal];
                     full = YES;
                 }
                 else
@@ -1831,7 +1874,7 @@
                         h -=12;
                     }
                     
-                    [FirstEventBtn setTitle:[NSString stringWithFormat:@"At  %d:%@  to %@%%",h,[[temp copy] objectForKey:@"value6"],[[temp copy] objectForKey:@"value4"]] forState:UIControlStateNormal];
+                    [FirstEventBtn setTitle:[NSString stringWithFormat:@"At %d:%@ to %@%%",h,[[temp copy] objectForKey:@"value6"],[[temp copy] objectForKey:@"value4"]] forState:UIControlStateNormal];
                     full = YES;
                 }
                 else
@@ -1926,7 +1969,7 @@
     [userdefaults objectForKey:@""];
     
     
-    NSLog(@"%@",SettingDic);
+//    NSLog(@"%@",SettingDic);
 }
 
 -(void)SaveAction

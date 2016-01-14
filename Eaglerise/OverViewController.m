@@ -674,7 +674,7 @@
 //        启动预览
         [self getRequest:5 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
         
-        timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(readAction) userInfo:nil repeats:YES];
+        timer = [NSTimer scheduledTimerWithTimeInterval:.2 target:self selector:@selector(readAction) userInfo:nil repeats:YES];
         WeekSlider.enabled = NO;
         slider.enabled = NO;
     }

@@ -407,6 +407,7 @@
 				TargetAttributes = {
 					20030A941BE34EAD006B8CD2 = {
 						CreatedOnToolsVersion = 7.0.1;
+						DevelopmentTeam = Q54M79SNP2;
 					};
 					20030AAD1BE34EAD006B8CD2 = {
 						CreatedOnToolsVersion = 7.0.1;
@@ -635,9 +636,9 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PREFIX_HEADER = "Eaglerise/Eaglerise-Prefix.pch";
 				INFOPLIST_FILE = Eaglerise/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "-.0.Eaglerise";
+				PRODUCT_BUNDLE_IDENTIFIER = com.e3.E3Light.BlueClient.Eaglerise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 			};
@@ -651,9 +652,9 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PREFIX_HEADER = "Eaglerise/Eaglerise-Prefix.pch";
 				INFOPLIST_FILE = Eaglerise/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "-.0.Eaglerise";
+				PRODUCT_BUNDLE_IDENTIFIER = com.e3.E3Light.BlueClient.Eaglerise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 			};

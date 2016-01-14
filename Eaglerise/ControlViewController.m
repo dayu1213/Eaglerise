@@ -111,7 +111,7 @@
 
     userdefaults = [NSUserDefaults standardUserDefaults];
     
-    pickerArray = [[NSArray alloc]initWithObjects:@"30 Minute",@"1 Hour",@"2 Hour",@"3 Hour",@"4 Hour",@"5 Hour", nil];
+    pickerArray = [[NSArray alloc]initWithObjects:@"30 Minute",@"1 Hour",@"2 Hour",@"4 Hour",@"6 Hour",@"next event", nil];
     number = 1;
     if ([userdefaults objectForKey:@"channel1"]==nil) {
         [userdefaults setObject:@"channel 1" forKey:@"channel1"];
@@ -1489,7 +1489,7 @@ if(index == DeviceTypeRead)
                 
             }
             BOOL isyes = NO;
-            NSLog(@"%d  %@",self.selArray.count,self.selArray);
+//            NSLog(@"%d  %@",self.selArray.count,self.selArray);
             for (NSString * str in self.selArray) {
                 if ([str isEqualToString:@"on"]) {
                     isyes = YES;
@@ -1511,6 +1511,8 @@ if(index == DeviceTypeRead)
 #pragma mark - UIActionSheet
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
+    
+    
     }
 - (void)actionSheetCancel:(UIActionSheet *)actionSheet{
     
@@ -1521,6 +1523,7 @@ if(index == DeviceTypeRead)
 }
 
 -(void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex{
+    
     if (buttonIndex == 0) {
         switchView2.on = NO;
     }
@@ -1532,10 +1535,19 @@ if(index == DeviceTypeRead)
             if (buttonIndex == 1) {
                 [self writeList:1 value:0 value2:30];
             }
-            else
+            else if(buttonIndex == 2)
             {
 //                [self writeList:1 value:[[pickerArray objectAtIndex:(buttonIndex-1)]intValue] value2:0];
-                [self writeList:1 value:buttonIndex-1 value2:0];
+                [self writeList:1 value:2 value2:0];
+            }else if (buttonIndex == 3){
+            
+                [self writeList:1 value:4 value2:0];
+            }else if (buttonIndex == 4){
+            
+                [self writeList:1 value:6 value2:0];
+            }else if (buttonIndex == 5){
+            
+                [self writeList:1 value:0 value2:0];
             }
             
         }
