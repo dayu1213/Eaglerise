@@ -116,12 +116,12 @@
                   moduleName = "Eaglerise"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/yifangtongda_yuyouliang/Desktop/Eaglerise/Eaglerise/DeviceViewController.m"
-                  timestampString = "474457076.672522"
+                  timestampString = "474514172.042937"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "350"
                   endingLineNumber = "350"
-                  offsetFromSymbolStart = "140">
+                  offsetFromSymbolStart = "100">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
@@ -131,12 +131,12 @@
                   moduleName = "Eaglerise"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/yifangtongda_yuyouliang/Desktop/Eaglerise/Eaglerise/DeviceViewController.m"
-                  timestampString = "474457076.672969"
+                  timestampString = "474514172.043266"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "350"
                   endingLineNumber = "350"
-                  offsetFromSymbolStart = "155">
+                  offsetFromSymbolStart = "122">
                </Location>
             </Locations>
          </BreakpointContent>

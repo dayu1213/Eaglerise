@@ -8,6 +8,7 @@
 
 #import "OverViewController.h"
 #import "JXBarChartView.h"
+#define LBL_TAG 10000000
 #define channelOnPeropheralView @"OverView"
 @interface OverViewController ()<UIScrollViewDelegate,CBCentralManagerDelegate,CBPeripheralDelegate,CBPeripheralManagerDelegate>
 {
@@ -377,26 +378,26 @@
         Lbl.textColor = [UIColor colorWithRed:(float)202/255.0 green:(float)202/255.0 blue:(float)202/255.0 alpha:1.0f];
         [contentSView addSubview:Lbl];
         switch (i) {
-            case 0:
+            case 1:
                 Lbl.text = @"Monday";
                 break;
-            case 1:
+            case 2:
                 Lbl.text = @"Tuesday";
                 
                 break;
-            case 2:
+            case 3:
                 Lbl.text = @"Wednesday";
                 break;
-            case 3:
+            case 4:
                 Lbl.text = @"Thursday";
                 break;
-            case 4:
+            case 5:
                 Lbl.text = @"Friday";
                 break;
-            case 5:
+            case 6:
                 Lbl.text = @"Saturday";
                 break;
-            case 6:
+            case 0:
                 Lbl.text = @"Sunday";
                 break;
                 
@@ -409,7 +410,7 @@
 //        if (i == (week -1)) {
 //            Lbl.textColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
 //        }
-        Lbl.tag = 100+i;
+        Lbl.tag = LBL_TAG+i;
         if (Device_Wdith <= 320) {
             [Lbl setFont:[UIFont systemFontOfSize:12]];
         }
@@ -482,8 +483,8 @@
     }
     else
     {
-        v =v-12;
-        [popLbl setText:[NSString stringWithFormat:@"%ld PM",(long)v]];
+//        v =v-12;
+        [popLbl setText:[NSString stringWithFormat:@"%ld PM",(long)v -12]];
     }
     
 }
@@ -495,13 +496,14 @@
 //        float lenght = (Device_Wdith-205)/6+15;
 
     week = (int)lroundf(sli.value);
-    UILabel * lbl1 = (UILabel *)[contentSView viewWithTag:100];
-    UILabel * lbl2 = (UILabel *)[contentSView viewWithTag:101];
-    UILabel * lbl3 = (UILabel *)[contentSView viewWithTag:102];
-    UILabel * lbl4 = (UILabel *)[contentSView viewWithTag:103];
-    UILabel * lbl5 = (UILabel *)[contentSView viewWithTag:104];
-    UILabel * lbl6 = (UILabel *)[contentSView viewWithTag:105];
-    UILabel * lbl7 = (UILabel *)[contentSView viewWithTag:106];
+//    NSLog(@"=============%d",week);
+    UILabel * lbl1 = (UILabel *)[contentSView viewWithTag:LBL_TAG];
+    UILabel * lbl2 = (UILabel *)[contentSView viewWithTag:LBL_TAG +1];
+    UILabel * lbl3 = (UILabel *)[contentSView viewWithTag:LBL_TAG +2];
+    UILabel * lbl4 = (UILabel *)[contentSView viewWithTag:LBL_TAG +3];
+    UILabel * lbl5 = (UILabel *)[contentSView viewWithTag:LBL_TAG +4];
+    UILabel * lbl6 = (UILabel *)[contentSView viewWithTag:LBL_TAG +5];
+    UILabel * lbl7 = (UILabel *)[contentSView viewWithTag:LBL_TAG +6];
      lbl1.textColor = [UIColor colorWithRed:(float)202/255.0 green:(float)202/255.0 blue:(float)202/255.0 alpha:1.0f];
      lbl2.textColor = [UIColor colorWithRed:(float)202/255.0 green:(float)202/255.0 blue:(float)202/255.0 alpha:1.0f];
      lbl3.textColor = [UIColor colorWithRed:(float)202/255.0 green:(float)202/255.0 blue:(float)202/255.0 alpha:1.0f];
@@ -511,25 +513,26 @@
      lbl7.textColor = [UIColor colorWithRed:(float)202/255.0 green:(float)202/255.0 blue:(float)202/255.0 alpha:1.0f];
     
     switch (lroundf(sli.value)) {
-        case 1:
+        case 0:
             lbl1.textColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
             break;
-        case 2:
+        case 1:
             lbl2.textColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
+//            lbl2.text = @"2";
             break;
-        case 3:
+        case 2:
             lbl3.textColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
             break;
-        case 4:
+        case 3:
             lbl4.textColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
             break;
-        case 5:
+        case 4:
             lbl5.textColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
             break;
-        case 6:
+        case 5:
             lbl6.textColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
             break;
-        case 7:
+        case 6:
             lbl7.textColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
             break;
             
@@ -542,8 +545,12 @@
 {
     UISlider * sli = (UISlider *)sender;
     //    WeekSlider.value =ilogbf(sli.value);
-    NSLog(@"---%ld=---",lroundf(sli.value));
+//    NSLog(@"---%ld=---",lroundf(sli.value));
     WeekSlider.value =week;
+    
+    
+    
+    
 }
 
 //babyDelegate
@@ -776,7 +783,8 @@
         else
         {
             v =v-12;
-            [popLbl setText:[NSString stringWithFormat:@"%ld PM",(long)time]];
+#pragma mark 修改时间
+            [popLbl setText:[NSString stringWithFormat:@"%ld PM",(long)time - 12]];
         }
 
         
@@ -798,7 +806,7 @@
         {
             week = nResult-1;
         }
-        WeekSlider.value = week;
+        WeekSlider.value = nResult;
         
         
         [textIndicators removeAllObjects];
