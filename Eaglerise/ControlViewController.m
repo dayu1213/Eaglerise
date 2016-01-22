@@ -1083,7 +1083,7 @@ if(index == DeviceTypeRead)
 //        [slider setThumbImage:[UIImage imageNamed:@"DeviceSel"] forState:UIControlStateNormal];
 //        [slider setThumbImage:[UIImage imageNamed:@"DeviceSel"] forState:UIControlStateHighlighted];
 //        [slider addTarget:self action:@selector(updateValue:) forControlEvents:UIControlEventValueChanged];
-        [slider addTarget:self action:@selector(saveSlider:) forControlEvents:UIControlEventTouchUpInside];
+        [slider addTarget:self action:@selector(saveSlider:) forControlEvents:UIControlEventTouchUpInside | UIControlEventTouchUpOutside];
         slider.tag = 100 + indexPath.row;
         [cell addSubview:slider];
         
@@ -1200,7 +1200,6 @@ if(index == DeviceTypeRead)
     
     UISlider * slider = (UISlider *)sender;
     float f = slider.value; //读取滑块的值
-    
     
     switch ((slider.tag-100)) {
         case 0:

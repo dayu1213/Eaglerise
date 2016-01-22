@@ -59,6 +59,13 @@
     //0为未设置，1为设置。如果全为0则清除原有数据。
     NSMutableArray * nightlyArray;
     
+    
+    NSMutableDictionary * nowDic;
+    BOOL ifSendMessage;
+    
+    UIView * dataView;
+    
+    
 }
 @property (nonatomic,strong) UITextField * deviceNameTxt,* channelTxt;
 //@property (nonatomic,strong) UIPickerView *PickerView;
@@ -100,7 +107,7 @@
         mydelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
         mydelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(stopReadTime) name:@"readTimeStop" object:nil];
-
+        nowDic = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
@@ -1727,6 +1734,9 @@
     self->baby  = mydelegate.baby;
     self.characteristic = [mydelegate.characteristics objectAtIndex:1];
     
+    
+//    [self creatUIAview];
+    
     if(pickerArray.count>0)
     {
         [pickerArray removeAllObjects];
@@ -2514,8 +2524,9 @@
             [userdefaults setObject:loadName forKey:@"loadName"];
             
             
-            NSMutableDictionary * dic = [SettingDic objectForKey:keys[buttonIndex - 1]];
-            [self loadMessage:dic];
+            nowDic = [SettingDic objectForKey:keys[buttonIndex - 1]];
+            ifSendMessage = YES;
+            [self loadMessage:nowDic];
 #pragma mark loading 修改
 //            loading = YES;
         }
@@ -2645,6 +2656,9 @@
             [SettingsBtn setTitle:[pickerArray2 objectAtIndex:(buttonIndex -1)] forState:UIControlStateNormal];
             
             WEEK = ((int)buttonIndex -2);
+            ifSendMessage = NO;
+            [self loadMessage:nowDic];
+            /*
             
             NSArray *keys = [channelDic allKeys];
             if(keys.count>0)
@@ -2763,7 +2777,7 @@
                 [FirstEventBtn setTitle:@"--" forState:UIControlStateNormal];
                 [SecondEventBtn setTitle:@"--" forState:UIControlStateNormal];
                 [TurnOffBtn setTitle:@"--" forState:UIControlStateNormal];
-            }
+            }*/
         }
         
         
@@ -2794,7 +2808,7 @@
     
     for (int i = -1; i<7; i++) {
         NSMutableDictionary * tempDic2 = [NSMutableDictionary dictionaryWithDictionary:[temp1 copy]];
-        [tempDic2 setObject:[NSString stringWithFormat:@"%d",i] forKey:@"value1"];
+        [tempDic2 setObject:[NSString stringWithFormat:@"%d",i] forKey:@"value2"];
 #pragma mark turnOn数据保存
         
         [defaultDic setObject:[tempDic2 copy] forKey:[NSString stringWithFormat:@"turnOn%d",i]];
@@ -2807,7 +2821,7 @@
     
     for (int i = -1; i<7; i++) {
         NSMutableDictionary * tempDic2 = [NSMutableDictionary dictionaryWithDictionary:[temp2 copy]];
-        [tempDic2 setObject:[NSString stringWithFormat:@"%d",i] forKey:@"value1"];
+        [tempDic2 setObject:[NSString stringWithFormat:@"%d",i] forKey:@"value2"];
 #pragma mark event1数据保存
         
         [defaultDic setObject:[tempDic2 copy] forKey:[NSString stringWithFormat:@"event1%d",i]];
@@ -2815,11 +2829,11 @@
     }
     
     
-    NSDictionary * temp3 = [NSDictionary dictionaryWithObjectsAndKeys:@"1",@"index",[NSString stringWithFormat:@"%d",0],@"value1",[NSString stringWithFormat:@"%d",255],@"value2",@"0",@"value3",[NSString stringWithFormat:@"%.0f",Secondslider.value],@"value4",[NSString stringWithFormat:@"%d",6],@"value5",[NSString stringWithFormat:@"%d",30],@"value6",@"0",@"value7", nil];
+    NSDictionary * temp3 = [NSDictionary dictionaryWithObjectsAndKeys:@"2",@"index",[NSString stringWithFormat:@"%d",0],@"value1",[NSString stringWithFormat:@"%d",255],@"value2",@"0",@"value3",[NSString stringWithFormat:@"%.0f",Secondslider.value],@"value4",[NSString stringWithFormat:@"%d",6],@"value5",[NSString stringWithFormat:@"%d",30],@"value6",@"0",@"value7", nil];
     
     for (int i = -1; i<7; i++) {
         NSMutableDictionary * tempDic2 = [NSMutableDictionary dictionaryWithDictionary:[temp3 copy]];
-        [tempDic2 setObject:[NSString stringWithFormat:@"%d",i] forKey:@"value1"];
+        [tempDic2 setObject:[NSString stringWithFormat:@"%d",i] forKey:@"value2"];
 #pragma mark event2数据保存
         
         [defaultDic setObject:[tempDic2 copy] forKey:[NSString stringWithFormat:@"event2%d",i]];
@@ -2830,7 +2844,7 @@
     NSDictionary * temp4 = [NSDictionary dictionaryWithObjectsAndKeys:@"0",@"index",[NSString stringWithFormat:@"%d",1],@"value1",[NSString stringWithFormat:@"%d",255],@"value2",[NSString stringWithFormat:@"%d",2],@"value3",[NSString stringWithFormat:@"%d",6],@"value4",[NSString stringWithFormat:@"%d",30],@"value5", nil];
     for (int i = -1; i<7; i++) {
         NSMutableDictionary * tempDic2 = [NSMutableDictionary dictionaryWithDictionary:[temp4 copy]];
-        [tempDic2 setObject:[NSString stringWithFormat:@"%d",i] forKey:@"value1"];
+        [tempDic2 setObject:[NSString stringWithFormat:@"%d",i] forKey:@"value2"];
 #pragma mark turnOff数据保存
         
         [defaultDic setObject:[tempDic2 copy] forKey:[NSString stringWithFormat:@"turnOff%d",i]];
@@ -3211,7 +3225,7 @@
 
             for (int i = -1; i<7; i++) {
                 NSMutableDictionary * tempDic2 = [NSMutableDictionary dictionaryWithDictionary:[temp copy]];
-                [tempDic2 setObject:[NSString stringWithFormat:@"%d",i] forKey:@"value1"];
+                [tempDic2 setObject:[NSString stringWithFormat:@"%d",i] forKey:@"value2"];
 #pragma mark turnOn数据保存
 
                 [setDic setObject:[tempDic2 copy] forKey:[NSString stringWithFormat:@"turnOn%d",i]];
@@ -3315,7 +3329,7 @@
             
             for (int i = -1; i<7; i++) {
                 NSMutableDictionary * tempDic2 = [NSMutableDictionary dictionaryWithDictionary:[temp copy]];
-                [tempDic2 setObject:[NSString stringWithFormat:@"%d",i] forKey:@"value1"];
+                [tempDic2 setObject:[NSString stringWithFormat:@"%d",i] forKey:@"value2"];
 #pragma mark turnOff数据保存
 
                 [setDic setObject:[tempDic2 copy] forKey:[NSString stringWithFormat:@"turnOff%d",i]];
@@ -3391,7 +3405,7 @@
         
         for (int i = -1; i<7; i++) {
             NSMutableDictionary * tempDic2 = [NSMutableDictionary dictionaryWithDictionary:[temp copy]];
-            [tempDic2 setObject:[NSString stringWithFormat:@"%d",i] forKey:@"value1"];
+            [tempDic2 setObject:[NSString stringWithFormat:@"%d",i] forKey:@"value2"];
 #pragma mark event1数据保存
 
             [setDic setObject:[tempDic2 copy] forKey:[NSString stringWithFormat:@"event1%d",i]];
@@ -3467,7 +3481,7 @@
         
         for (int i = -1; i<7; i++) {
             NSMutableDictionary * tempDic2 = [NSMutableDictionary dictionaryWithDictionary:[temp copy]];
-            [tempDic2 setObject:[NSString stringWithFormat:@"%d",i] forKey:@"value1"];
+            [tempDic2 setObject:[NSString stringWithFormat:@"%d",i] forKey:@"value2"];
 #pragma mark event2数据保存
 
             [setDic setObject:[tempDic2 copy] forKey:[NSString stringWithFormat:@"event2%d",i]];
@@ -3656,6 +3670,7 @@
     
 }
 
+
 -(void)loadMessage:(NSMutableDictionary *)setDics
 {
     
@@ -3663,6 +3678,10 @@
 //    NSLog(@"%@",setDics);
 //    NSArray * k = [setDics allKeys];
 //    NSLog(@"%@",k);
+    
+    if (setDics.count == 0) {
+        return;
+    }
     
     NSString * str1 = [NSString stringWithFormat:@"turnOn%d",WEEK];
     NSDictionary *temp = [setDics objectForKey:str1];
@@ -3692,7 +3711,7 @@
             }
             [TurnOnBtn setTitle:[NSString stringWithFormat:@"At time %@ to %@%%",strq,v4] forState:UIControlStateNormal];
         }
- [self getRequest:7 requestDic:[temp copy] characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+// [self getRequest:7 requestDic:[temp copy] characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
         
 //        [TurnOnBtn setTitle:[NSString stringWithFormat:@"At  %d:%@  to %@%%",h,[[temp copy] objectForKey:@"value6"],[[temp copy] objectForKey:@"value4"]] forState:UIControlStateNormal];
 //        full = YES;
@@ -3713,7 +3732,7 @@
         if (!v3) {
             [FirstEventBtn setTitle:@"Disable" forState:UIControlStateNormal];
             //        full = YES;
-            [self getRequest:7 requestDic:[temp copy] characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+//            [self getRequest:7 requestDic:[temp copy] characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
 
         }else{
         if (h>12) {
@@ -3732,7 +3751,7 @@
 //        [FirstEventBtn setTitle:[NSString stringWithFormat:@"At  %d:%@  to %@%%",h,[[temp copy] objectForKey:@"value6"],[[temp copy] objectForKey:@"value4"]] forState:UIControlStateNormal];
         [FirstEventBtn setTitle:[NSString stringWithFormat:@"At %@ PM to %@%%",strT,v4] forState:UIControlStateNormal];
 //        full = YES;
-         [self getRequest:7 requestDic:[temp copy] characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+//         [self getRequest:7 requestDic:[temp copy] characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
     }
 //    else
 //    {
@@ -3752,7 +3771,7 @@
         if (!v3) {
             [SecondEventBtn setTitle:@"Disable" forState:UIControlStateNormal];
             //        full = YES;
-            [self getRequest:7 requestDic:[temp copy] characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+//            [self getRequest:7 requestDic:[temp copy] characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
 
         }else{
         if (h>12) {
@@ -3768,7 +3787,7 @@
         [SecondEventBtn setTitle:[NSString stringWithFormat:@"At %@ PM to %@%%",strT,v4] forState:UIControlStateNormal];
 
 //        full = YES;
-         [self getRequest:7 requestDic:[temp copy] characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+//         [self getRequest:7 requestDic:[temp copy] characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
     }
 //    else
 //    {
@@ -3807,7 +3826,7 @@
             [TurnOffBtn setTitle:[NSString stringWithFormat:@"At time %@",strq] forState:UIControlStateNormal];
         }
         
-        [self getRequest:6 requestDic:[temp copy] characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+//        [self getRequest:6 requestDic:[temp copy] characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
 //        [TurnOffBtn setTitle:[NSString stringWithFormat:@"At  %d:%@  to %@%%",h,[[temp copy] objectForKey:@"value6"],[[temp copy] objectForKey:@"value4"]] forState:UIControlStateNormal];
 
 //        full = YES;
@@ -3819,8 +3838,122 @@
     
     
 //    loading = full;
+    
+    
+//    NSLog(@"%@",setDics);
+    if (ifSendMessage) {
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"addDataView" object:nil];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+
+        
+//        [self creatUIAview];
+        
+        for (NSInteger i = 0; i < 7; i ++) {
+            
+            NSString * event1 = [NSString stringWithFormat:@"event1%d",i];
+//            NSLog(@"%@",event1);
+            if ([setDics objectForKey:event1]) {
+//                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    NSMutableDictionary * temp1 = [NSMutableDictionary dictionaryWithDictionary:[setDics objectForKey:event1]];
+                    
+                    [temp1 setObject:[NSString stringWithFormat:@"%d",CH -1] forKey:@"value1"];
+                    [self getRequest:7 requestDic:temp1 characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+
+//                });
+
+            }
+            
+            [NSThread sleepForTimeInterval:0.5];
+            NSString * event2 = [NSString stringWithFormat:@"event2%d",i];
+            if ([setDics objectForKey:event2]) {
+
+                
+//                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,0), ^{
+
+                    NSMutableDictionary * temp2 = [NSMutableDictionary dictionaryWithDictionary:[setDics objectForKey:event2]];
+                    [temp2 setObject:[NSString stringWithFormat:@"%d",CH -1] forKey:@"value1"];
+                    
+                    [self getRequest:7 requestDic:temp2 characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+//                });
+                
+
+            }
+            [NSThread sleepForTimeInterval:0.5];
+
+            NSString * turnOn = [NSString stringWithFormat:@"turnOn%d",i];
+            if ([setDics objectForKey:turnOn]) {
+//                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+
+                    NSMutableDictionary * temp3 = [NSMutableDictionary dictionaryWithDictionary:[setDics objectForKey:turnOn]];
+                    [temp3 setObject:[NSString stringWithFormat:@"%d",CH -1] forKey:@"value1"];
+                    
+                    [self getRequest:7 requestDic:temp3 characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+
+//                });
+
+            }
+            [NSThread sleepForTimeInterval:0.5];
+
+            NSString * turnOff = [NSString stringWithFormat:@"turnOff%d",i];
+            if ([setDics objectForKey:turnOff]) {
+//                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+
+                    NSMutableDictionary * temp4 = [NSMutableDictionary dictionaryWithDictionary:[setDics objectForKey:turnOff]];
+                    [temp4 setObject:[NSString stringWithFormat:@"%d",CH -1] forKey:@"value1"];
+                    
+                    [self getRequest:6 requestDic:temp4 characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+
+//                });
+
+            }
+            
+        }
+        
+    });
+
+    
+    }
+    ifSendMessage = NO;
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"removeView" object:nil];
+
+
+//    [self moveView];
+}
+#pragma mark 添加一个view菊花
+- (void)creatUIAview{
+    
+    
+    dataView = [[UIView alloc] initWithFrame:self.view.frame];
+    
+    UILabel * label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, Device_Wdith, 40)];
+    
+    label.text = @"Are connecting, please wait a moment...";
+    label.center = self.view.center;
+    label.textColor = [UIColor blackColor];
+    [label setTextAlignment:NSTextAlignmentCenter];
+    [label setFont:[UIFont systemFontOfSize:14]];
+    //    [dataView addSubview:label];
+    dataView.backgroundColor = [UIColor clearColor];
+    
+    UIActivityIndicatorView * aiv = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    aiv.center = CGPointMake(label.center.x, label.center.y - 40);
+    aiv.color = [UIColor blueColor];
+    [aiv startAnimating];
+    
+    [dataView addSubview:aiv];
+    [self.view addSubview:dataView];
+//    [self.view addSubview:aiv];
 
 }
+
+
+- (void)moveView{
+    
+    [dataView removeFromSuperview];
+}
+
+
 
 /**更新设备名称*/
 -(void)updateDeviceName
