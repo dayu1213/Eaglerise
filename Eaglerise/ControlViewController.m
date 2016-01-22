@@ -40,6 +40,7 @@
     int timerNum;
     BOOL HeartSave;
     bool isUPdate;
+    BOOL heartStart;
     
 }
 
@@ -61,7 +62,8 @@
     self = [super init];
     if (self) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadDataAction:) name:@"ld" object:nil];
-// [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(startTimer) name:@"startHeart" object:nil];
+ [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setHeartStart) name:@"heartBegan" object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setHeartStop) name:@"heartstop" object:nil];
         mydelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
         
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadTable) name:@"loadControlTable" object:nil];
@@ -100,6 +102,7 @@
     //初始化
     self.services = [[NSMutableArray alloc]init];
     HeartSave = NO;
+    heartStart = YES;
     show = NO;
 //    修改
     ChannelNum = 2;
@@ -308,6 +311,9 @@
 //    }];
     //设置发现设备的Services的委托
     [baby setBlockOnDiscoverServicesAtChannel:channelOnPeropheralView block:^(CBPeripheral *peripheral, NSError *error) {
+        
+        
+//        NSLog(@"%d",peripheral.services.count);
         for (CBService *s in peripheral.services) {
             ///插入section到tableview
             [weakSelf insertSectionToTableView:s];
@@ -1234,8 +1240,18 @@ if(index == DeviceTypeRead)
      }
 - (void)timerFire
 {
+    
+#pragma mark 心跳包控制
+    
+    if (!heartStart) {
+        return;
+    }
+    
     if (timerNum==20) {
         NSLog(@"test timer");
+        if (self.services.count == 0) {
+            return;
+        }
         self.characteristic = [[[self.services objectAtIndex:0] characteristics]objectAtIndex:1];
         NSDictionary * temp = [NSDictionary dictionaryWithObjectsAndKeys:@"1",@"index", nil];
         [self getRequest:2 requestDic:temp  characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
@@ -1439,12 +1455,13 @@ if(index == DeviceTypeRead)
         }
         else
         {
+            num = 1;
+            self.characteristic = [[[self.services objectAtIndex:0] characteristics]objectAtIndex:num];
             //            PopView.hidden = YES;
             if(self.currPeripheral != nil &&self.characteristic != nil)
             {
                 //         num = switchw.tag - 1000;
-                num = 1;
-                self.characteristic = [[[self.services objectAtIndex:0] characteristics]objectAtIndex:num];
+               
                 //            baby.channel(channelOnPeropheralView).characteristicDetails(self.currPeripheral,self.characteristic);
                 [self writeList:0 value:0 value2:0];
             }
@@ -1588,11 +1605,44 @@ if(index == DeviceTypeRead)
     isRead = NO;
     NSDictionary * temp = notification.userInfo;
     self.currPeripheral = [temp objectForKey:@"currPeripheral"];
-    if(baby!=nil)
-    {
-//        [baby cancelAllPeripheralsConnection];
-        [baby stop];
+    
+    
+    if (self.services.count > 0) {
+        [self.services removeAllObjects];
     }
+#pragma mark 需要打开或关闭
+//    if (mydelegate.characteristics.count > 0) {
+//        [mydelegate.characteristics removeAllObjects];
+//    }
+//    
+//    if(mydelegate.specialPeripheralInfo.characteristics.count>0)
+//    {
+//        [mydelegate.specialPeripheralInfo.characteristics removeAllObjects];
+//    }
+    
+//    if(baby!=nil)
+//    {
+////        [baby cancelAllPeripheralsConnection];
+//        [baby stop];
+//    }
+    
+    
+    if (mydelegate.characteristics.count > 0) {
+        [mydelegate.characteristics removeAllObjects];
+    }
+    
+    if(mydelegate.specialPeripheralInfo.characteristics.count>0)
+    {
+        [mydelegate.specialPeripheralInfo.characteristics removeAllObjects];
+    }
+    if(mydelegate.specialPeripheralInfo!=nil)
+    {
+        
+        mydelegate.specialPeripheralInfo = nil;
+    }
+
+    
+    self ->baby = nil;
     self->baby = [temp objectForKey:@"baby"];
 //    [baby cancelAllPeripheralsConnection];
 //    self->baby = [temp objectForKey:@"baby"];
@@ -1605,6 +1655,10 @@ if(index == DeviceTypeRead)
 
     //开始扫描设备
     [self performSelector:@selector(loadData) withObject:nil afterDelay:2];
+    
+    
+    
+    
 }
 
 -(void)writeOn{
@@ -1673,7 +1727,7 @@ isRead = NO;
     }
 
    
-    if (number ==4 && allTimer != nil) {
+    if (number ==mydelegate.channelNum && allTimer != nil) {
         [allTimer invalidate];
         allTimer = nil;
         number = 1;
@@ -1737,6 +1791,29 @@ isRead = NO;
 
     
 }
+
+//修改heartStart参数
+- (void)setHeartStart{
+
+    heartStart = YES;
+#pragma mark 每次进来开始一次心跳包
+    sleep(1);
+    NSLog(@"第一次心跳包发送");
+    self.characteristic = [[[self.services objectAtIndex:0] characteristics]objectAtIndex:1];
+    NSDictionary * temp = [NSDictionary dictionaryWithObjectsAndKeys:@"1",@"index", nil];
+    [self getRequest:2 requestDic:temp  characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+
+}
+
+- (void)setHeartStop{
+
+    heartStart = NO;
+}
+
+
+
+
+
 
 
 @end

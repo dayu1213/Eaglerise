@@ -69,6 +69,12 @@
         case 10:
             [[self remoteController] writeValue:[self writeValueList2:[temp objectForKey:@"NameStr"] value:[[temp objectForKey:@"value"]intValue]] currPeripheral:currPeripheral characteristic:characteristic delegate:self];
             break;
+        case 11:[[self remoteController] writeValue:[self writeValueList3:[temp objectForKey:@"NameStr"]] currPeripheral:currPeripheral characteristic:characteristic delegate:self];
+            break;
+        case 12:[[self remoteController] writeValue:[self writeValueList4:[temp objectForKey:@"NameStr"]] currPeripheral:currPeripheral characteristic:characteristic delegate:self];
+            break;
+        case 13:[[self remoteController] writeValue:[self writeValueList5:nil] currPeripheral:currPeripheral characteristic:characteristic delegate:self];
+            break;
 
             
             
@@ -94,10 +100,76 @@
             [[self remoteController] readValue:[self writeValueList2:[temp objectForKey:@"NameStr"] value:[[temp objectForKey:@"value"]intValue]] headRequest: [self readHead] footRequest:[self  readfoot] currPeripheral:currPeripheral characteristicArray:characteristicArray delegate:delegate Baby:baby callFrom:callFrom];
             break;
             
+        case 11:
+            
+            [[self remoteController] readValue:[self writeValueList4:[[temp objectForKey:@"index"] intValue] value1:[[temp objectForKey:@"value1"] intValue] value2:[[temp objectForKey:@"value2"] intValue]] headRequest: [self readHead] footRequest:[self  readfoot] currPeripheral:currPeripheral characteristicArray:characteristicArray delegate:delegate Baby:baby callFrom:callFrom];//通道类型
+            break;
+
+            
         default:
             break;
     }
 }
+
+
+/**11*/ //index 0 turn on 1 turn off 2 event1  3 event2
+-(NSData *)writeValueList4:(int)type value1:(int)value1 value2:(int)value2
+{
+    AppDelegate *delegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
+    NSData *data;
+    Byte byte[14];
+    for(int i=0;i<3;i++) {
+        int offset = (3 - 1 -i)*8;
+        byte[i] = (Byte)((delegate.number>>offset)&0xff);
+    }
+    
+    byte[3]=0x00;
+    byte[4]=0x00;
+    byte[5]=0x00;
+    byte[6]=0x00;
+    byte[7]=0xf2;
+    byte[8]=0x11;
+    byte[9]=0x02;
+    switch(type)
+    {
+        case 0:
+            byte[10]=0x03;
+            
+            byte[11]=0x14;
+            break;
+        case 1:
+            byte[10]=0x03;
+            
+            byte[11]=0x16;
+            break;
+        case 2:
+            byte[10]=0x03;
+            
+            byte[11]=0x18;
+            break;
+        case 3:
+            byte[10]=0x03;
+            
+            byte[11]=0x1A;
+            break;
+            
+            
+        default:
+            break;
+    }
+    
+    int offset = 0;
+    byte[12] = (Byte)((value1>>offset)&0xff);
+    byte[13] = (Byte)((value2>>offset)&0xff);
+    //    byte[14] = (Byte)((value3>>offset)&0xff);
+    //    byte[15] = (Byte)((value4>>offset)&0xff);
+    //    byte[16] = (Byte)((value5>>offset)&0xff);
+    //    byte[17] = (Byte)((value6>>offset)&0xff);
+    
+    data = [NSData dataWithBytes:&byte length:sizeof(byte)];
+    return data;
+}
+
 
 
 #pragma -- test
@@ -975,6 +1047,147 @@
     //        NSLog(@"-2-%@\n\n",TT3);
     [tempData appendData:postbody2];
     data = tempData;
+    return data;
+}
+
+-(NSData *)writeValueList3:(NSString *)NameStr
+{
+    AppDelegate *delegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
+    NSData *data;
+    
+    const char *swtr = [NameStr UTF8String];
+    int jsonlenght = (int)strlen(swtr);
+    //    int csum = jsonlenght + 11;
+    Byte byte[1];
+    //    for(int i=0;i<3;i++) {
+    //        int offset = (3 - 1 -i)*8;
+    //        byte[i] = (Byte)((delegate.number>>offset)&0xff);
+    //    }
+    
+    //    byte[3]=0x00;
+    //    byte[4]=0x00;
+    //    byte[5]=0x00;
+    //    byte[6]=0x00;
+    //    byte[7]=0xf2;
+    //    byte[8]=0x11;
+    //    byte[9]=0x02;
+    //    byte[10]=0x02;
+    byte[0]=0X04;
+//    byte[1]=(Byte)(((jsonlenght+1)>>0)&0xff);
+//    byte[2]=0x21;
+    NSMutableData *tempData = [NSMutableData data];
+    NSData *  postbody = [NSData dataWithBytes:&byte length:sizeof(byte)];
+    NSData * postbody2=[NameStr dataUsingEncoding:NSUTF8StringEncoding];
+    
+    [tempData setData:postbody];
+    //        NSLog(@"-1-%@\n\n",TT);
+    //        NSLog(@"-2-%@\n\n",TT3);
+    [tempData appendData:postbody2];
+    data = [self addZeroWithData:tempData];
+//    NSLog(@"%@",data);
+    return data;
+}
+
+
+- (NSData *)addZeroWithData:(NSData *)data{
+
+    NSInteger length0 = data.length;
+
+    Byte bt[1];
+    bt[0] = 0x00;
+    NSData * adddata = [NSData dataWithBytes:&bt length:sizeof(bt)];
+    NSMutableData * returnData = [NSMutableData dataWithData:data];
+    
+    for (NSInteger i = length0; i < 17 ; i ++) {
+        [returnData appendData:adddata];
+        
+    }
+    
+    
+    return returnData;
+}
+
+-(NSData *)writeValueList4:(NSString *)NameStr
+{
+    AppDelegate *delegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
+    NSData *data;
+    
+    const char *swtr = [NameStr UTF8String];
+    int jsonlenght = (int)strlen(swtr);
+    //    int csum = jsonlenght + 11;
+    Byte byte[1];
+    //    for(int i=0;i<3;i++) {
+    //        int offset = (3 - 1 -i)*8;
+    //        byte[i] = (Byte)((delegate.number>>offset)&0xff);
+    //    }
+    
+    //    byte[3]=0x00;
+    //    byte[4]=0x00;
+    //    byte[5]=0x00;
+    //    byte[6]=0x00;
+    //    byte[7]=0xf2;
+    //    byte[8]=0x11;
+    //    byte[9]=0x02;
+    //    byte[10]=0x02;
+    byte[0]=0X05;
+    //    byte[1]=(Byte)(((jsonlenght+1)>>0)&0xff);
+    //    byte[2]=0x21;
+    NSMutableData *tempData = [NSMutableData data];
+    NSData *  postbody = [NSData dataWithBytes:&byte length:sizeof(byte)];
+    NSData * postbody2=[NameStr dataUsingEncoding:NSUTF8StringEncoding];
+    
+    [tempData setData:postbody];
+    //        NSLog(@"-1-%@\n\n",TT);
+    //        NSLog(@"-2-%@\n\n",TT3);
+    [tempData appendData:postbody2];
+    data = [self addZeroWithData:tempData];
+//    NSLog(@"%@",data);
+    return data;
+}
+
+
+-(NSData *)writeValueList5:(NSString *)NameStr
+{
+    AppDelegate *delegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
+    NSData *data;
+    
+//    const char *swtr = [NameStr UTF8String];
+//    int jsonlenght = (int)strlen(swtr);
+    //    int csum = jsonlenght + 11;
+    Byte byte[17];
+    //    for(int i=0;i<3;i++) {
+    //        int offset = (3 - 1 -i)*8;
+    //        byte[i] = (Byte)((delegate.number>>offset)&0xff);
+    //    }
+    
+    byte[0]= 0X06;
+    byte[1]= 0xc0;
+    byte[2]=0xc1;
+    byte[3]=0xc2;
+    byte[4]=0xc3;
+    byte[5]=0xc4;
+    byte[6]=0xc5;
+    byte[7]=0xc6;
+    byte[8]=0xc7;
+    byte[9]=0xd8;
+    byte[10]=0xd9;
+    byte[11] = 0xda;
+    byte[12] = 0xdb;
+    byte[13] = 0xdc;
+    byte[14] = 0xdd;
+    byte[15] = 0xde;
+    byte[16] = 0xdf;
+
+    NSMutableData *tempData = [NSMutableData data];
+    NSData *  postbody = [NSData dataWithBytes:&byte length:sizeof(byte)];
+    NSData * postbody2=[NameStr dataUsingEncoding:NSUTF8StringEncoding];
+    
+    [tempData setData:postbody];
+    //        NSLog(@"-1-%@\n\n",TT);
+    //        NSLog(@"-2-%@\n\n",TT3);
+    [tempData appendData:postbody2];
+    data = tempData;
+//    NSLog(@"%@",data);
     return data;
 }
 

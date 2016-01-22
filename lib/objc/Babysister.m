@@ -11,6 +11,7 @@
 #import "Babysister.h"
 #import "BabyCallback.h"
 #import "SVProgressHUD.h"
+#import "AppDelegate.h"
 @implementation Babysister
 
 #define currChannel [babySpeaker callbackOnCurrChannel]
@@ -88,13 +89,13 @@
     [bleManager connectPeripheral:peripheral options:[currChannel babyOptions].connectPeripheralWithOptions];
 }
 
-
+#pragma mark peripheral == nil 注释了
 //断开设备连接
 -(void)cancelPeripheralConnection:(CBPeripheral *)peripheral{
     
-//    if (peripheral == nil) {
-//        return;
-//    }
+    if (peripheral == nil) {
+        return;
+    }
     [bleManager cancelPeripheralConnection:peripheral];
     if([currChannel blockOnCancelPeripheralConnection]){
         [currChannel blockOnCancelPeripheralConnection](bleManager,peripheral);
@@ -173,10 +174,10 @@
     //设备添加到q列表
    
 //    [SVProgressHUD showInfoWithStatus:[NSString stringWithFormat:@"信号强度为 %d,距离为%fm",abs([RSSI intValue]),[self calcDistByRSSI:[RSSI intValue]]]];
-    if ( [[NSString stringWithFormat:@"%@",[advertisementData objectForKey:@"kCBAdvDataLocalName"]] rangeOfString:@"E3Control"].location !=NSNotFound) {
+//    if ( [[NSString stringWithFormat:@"%@",[advertisementData objectForKey:@"kCBAdvDataLocalName"]] rangeOfString:@"E3Control"].location !=NSNotFound) {
          [self addPeripheral:peripheral];
         //发出通知
-        [[NSNotificationCenter defaultCenter]postNotificationName:@"didDiscoverPeripheral"
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"didDiscoverPeripheral"
                                                            object:nil
                                                          userInfo:@{@"central":central,@"peripheral":peripheral,@"advertisementData":advertisementData,@"RSSI":RSSI}];
         
@@ -197,7 +198,7 @@
             }
         }
 
-    }
+//    }
     }
 - (float)calcDistByRSSI:(int)rssi
 {
@@ -282,6 +283,8 @@
 //发现服务的Characteristics
 -(void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error{
     
+    NSString *Pair_UUID_STRING = @"00010203-0405-0607-0809-0a0b0c0d1914";
+    
     for(int i=0; i < service.characteristics.count; i++) {
         
         CBCharacteristic *c = [service.characteristics objectAtIndex:i];
@@ -292,6 +295,16 @@
             NSLog(@"-------------1912-------------");
         }
          NSLog(@"error Discovered characteristics for %@ c.properties is %lu c.UUID Is %@", service.UUID,(unsigned long)c.properties,c.UUID);
+        
+        if ([[c UUID] isEqual:[CBUUID UUIDWithString:Pair_UUID_STRING]]) {
+
+#pragma mark 保存特征值
+            
+            AppDelegate * dele = [[UIApplication sharedApplication] delegate];
+            dele.Characteristic1914 = c;
+        }
+        
+        
     }
    
     if (error)

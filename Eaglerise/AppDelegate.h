@@ -23,5 +23,8 @@
 @property (nonatomic,strong) PeripheralInfo * specialPeripheralInfo;
 
 @property  int channelNum;
+
+@property(nonatomic, strong)CBCharacteristic * Characteristic1914;
+
 @end
 

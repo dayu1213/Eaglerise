@@ -9,6 +9,8 @@
 #import "OverViewController.h"
 #import "JXBarChartView.h"
 #define LBL_TAG 10000000
+
+
 #define channelOnPeropheralView @"OverView"
 @interface OverViewController ()<UIScrollViewDelegate,CBCentralManagerDelegate,CBPeripheralDelegate,CBPeripheralManagerDelegate>
 {
@@ -177,41 +179,80 @@
  */
 -(void)iv
 {
-     textIndicators = [[NSMutableArray alloc] initWithObjects:@"channel 1", @"channel 2", @"channel 3", @"channel 4", nil];
-    if ([userdefaults objectForKey:@"channel1"]!=nil) {
-        [textIndicators replaceObjectAtIndex:0 withObject:[userdefaults objectForKey:@"channel1"]];
-    }
-    if ([userdefaults objectForKey:@"channel2"]!=nil) {
-        [textIndicators replaceObjectAtIndex:1 withObject:[userdefaults objectForKey:@"channel2"]];
-    }
-    if ([userdefaults objectForKey:@"channel3"]!=nil) {
-        [textIndicators replaceObjectAtIndex:2 withObject:[userdefaults objectForKey:@"channel3"]];
-    }
-    if ([userdefaults objectForKey:@"channel4"]!=nil) {
-        [textIndicators replaceObjectAtIndex:3 withObject:[userdefaults objectForKey:@"channel4"]];
-    }
+     textIndicators = [[NSMutableArray alloc] init];
+//    if ([userdefaults objectForKey:@"channel1"]!=nil) {
+//        [textIndicators replaceObjectAtIndex:0 withObject:[userdefaults objectForKey:@"channel1"]];
+//    }
+//    if ([userdefaults objectForKey:@"channel2"]!=nil) {
+//        [textIndicators replaceObjectAtIndex:1 withObject:[userdefaults objectForKey:@"channel2"]];
+//    }
+//    if ([userdefaults objectForKey:@"channel3"]!=nil) {
+//        [textIndicators replaceObjectAtIndex:2 withObject:[userdefaults objectForKey:@"channel3"]];
+//    }
+//    if ([userdefaults objectForKey:@"channel4"]!=nil) {
+//        [textIndicators replaceObjectAtIndex:3 withObject:[userdefaults objectForKey:@"channel4"]];
+//    }
     values = [[NSMutableArray alloc] init];
     
 
-    for (int i = 0; i<mydelegate.channelNum; i++) {
-        switch (i) {
-            case 0:
-                [values addObject:@([[NSUserDefaults standardUserDefaults] objectForKey:@"slider1"] ==nil?100:[[[NSUserDefaults standardUserDefaults] objectForKey:@"slider1"]intValue])];
-                break;
-            case 1:
-                [values addObject:@([[NSUserDefaults standardUserDefaults] objectForKey:@"slider2"] ==nil?100:[[[NSUserDefaults standardUserDefaults] objectForKey:@"slider2"]intValue])];
-                break;
-            case 2:
-                [values addObject:@([[NSUserDefaults standardUserDefaults] objectForKey:@"slider3"] ==nil?100:[[[NSUserDefaults standardUserDefaults] objectForKey:@"slider3"]intValue])];
-                break;
-            case 3:
-                [values addObject:@([[NSUserDefaults standardUserDefaults] objectForKey:@"slider4"] ==nil?100:[[[NSUserDefaults standardUserDefaults] objectForKey:@"slider4"]intValue])];
-                break;
-                
-            default:
-                break;
-        }
-    }
+//    for (int i = 0; i<mydelegate.channelNum; i++) {
+//        switch (i) {
+//            case 0:
+//            {
+//                if ([userdefaults objectForKey:@"channel1"]!=nil) {
+//                    [textIndicators replaceObjectAtIndex:0 withObject:[userdefaults objectForKey:@"channel1"]];
+//                }
+//                else
+//                {
+//                    [textIndicators addObject:@"channel 1"];
+//                }
+//                [values addObject:@([[NSUserDefaults standardUserDefaults] objectForKey:@"slider1"] ==nil?100:[[[NSUserDefaults standardUserDefaults] objectForKey:@"slider1"]intValue])];
+//            }
+//                break;
+//            case 1:
+//            {
+//                if ([userdefaults objectForKey:@"channel2"]!=nil) {
+//                    [textIndicators replaceObjectAtIndex:1 withObject:[userdefaults objectForKey:@"channel2"]];
+//                }
+//                else
+//                {
+//                    [textIndicators addObject:@"channel 2"];
+//                }
+//
+//                [values addObject:@([[NSUserDefaults standardUserDefaults] objectForKey:@"slider2"] ==nil?100:[[[NSUserDefaults standardUserDefaults] objectForKey:@"slider2"]intValue])];
+//            }
+//                break;
+//            case 2:
+//            {
+//                if ([userdefaults objectForKey:@"channel3"]!=nil) {
+//                    [textIndicators replaceObjectAtIndex:2 withObject:[userdefaults objectForKey:@"channel3"]];
+//                }
+//                else
+//                {
+//                    [textIndicators addObject:@"channel 3"];
+//                }
+//
+//                [values addObject:@([[NSUserDefaults standardUserDefaults] objectForKey:@"slider3"] ==nil?100:[[[NSUserDefaults standardUserDefaults] objectForKey:@"slider3"]intValue])];
+//            }
+//                break;
+//            case 3:
+//            {
+//                if ([userdefaults objectForKey:@"channel4"]!=nil) {
+//                    [textIndicators replaceObjectAtIndex:3 withObject:[userdefaults objectForKey:@"channel4"]];
+//                }
+//                else
+//                {
+//                    [textIndicators addObject:@"channel 4"];
+//                }
+//
+//                [values addObject:@([[NSUserDefaults standardUserDefaults] objectForKey:@"slider4"] ==nil?100:[[[NSUserDefaults standardUserDefaults] objectForKey:@"slider4"]intValue])];
+//            }
+//                break;
+//                
+//            default:
+//                break;
+//        }
+//    }
 //    values = [[NSMutableArray alloc] initWithObjects:, , , , nil];
     
 //    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
@@ -275,7 +316,7 @@
     [contentSView addSubview:Lbl];
     
     Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 300, 40, 30)];
-    Lbl.text = @"0";
+    Lbl.text = @"1";
     Lbl.backgroundColor = [UIColor clearColor];
     [Lbl setTextAlignment:NSTextAlignmentLeft];
     [Lbl setTextColor:[UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f]];
@@ -295,7 +336,7 @@
     [contentSView addSubview:slider];
     
     Lbl = [[UILabel alloc]initWithFrame:CGRectMake(Device_Wdith-60, 300, 40, 30)];
-    Lbl.text = @"24";
+    Lbl.text = @"0(24)";
     Lbl.backgroundColor = [UIColor clearColor];
     [Lbl setTextAlignment:NSTextAlignmentLeft];
     [Lbl setTextColor:[UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f]];
@@ -722,8 +763,70 @@
     self.currPeripheral = mydelegate.currPeripheral;
     self->baby  = mydelegate.baby;
     self.characteristic = [mydelegate.characteristics objectAtIndex:1];
-    
-    
+    for(int i = 0;i <mydelegate.channelNum ;i++)
+    {
+        [textIndicators addObject:[NSString stringWithFormat:@"channel %d",(i+1)]];
+    }
+
+    for (int i = 0; i<mydelegate.channelNum; i++) {
+        switch (i) {
+            case 0:
+            {
+                if ([userdefaults objectForKey:@"channel1"]!=nil) {
+                    [textIndicators replaceObjectAtIndex:0 withObject:[userdefaults objectForKey:@"channel1"]];
+                }
+                else
+                {
+                    [textIndicators addObject:@"channel 1"];
+                }
+                [values addObject:@([[NSUserDefaults standardUserDefaults] objectForKey:@"slider1"] ==nil?100:[[[NSUserDefaults standardUserDefaults] objectForKey:@"slider1"]intValue])];
+            }
+                break;
+            case 1:
+            {
+                if ([userdefaults objectForKey:@"channel2"]!=nil) {
+                    [textIndicators replaceObjectAtIndex:1 withObject:[userdefaults objectForKey:@"channel2"]];
+                }
+                else
+                {
+                    [textIndicators addObject:@"channel 2"];
+                }
+                
+                [values addObject:@([[NSUserDefaults standardUserDefaults] objectForKey:@"slider2"] ==nil?100:[[[NSUserDefaults standardUserDefaults] objectForKey:@"slider2"]intValue])];
+            }
+                break;
+            case 2:
+            {
+                if ([userdefaults objectForKey:@"channel3"]!=nil) {
+                    [textIndicators replaceObjectAtIndex:2 withObject:[userdefaults objectForKey:@"channel3"]];
+                }
+                else
+                {
+                    [textIndicators addObject:@"channel 3"];
+                }
+                
+                [values addObject:@([[NSUserDefaults standardUserDefaults] objectForKey:@"slider3"] ==nil?100:[[[NSUserDefaults standardUserDefaults] objectForKey:@"slider3"]intValue])];
+            }
+                break;
+            case 3:
+            {
+                if ([userdefaults objectForKey:@"channel4"]!=nil) {
+                    [textIndicators replaceObjectAtIndex:3 withObject:[userdefaults objectForKey:@"channel4"]];
+                }
+                else
+                {
+                    [textIndicators addObject:@"channel 4"];
+                }
+                
+                [values addObject:@([[NSUserDefaults standardUserDefaults] objectForKey:@"slider4"] ==nil?100:[[[NSUserDefaults standardUserDefaults] objectForKey:@"slider4"]intValue])];
+            }
+                break;
+                
+            default:
+                break;
+        }
+    }
+
     [self overViewData];
 }
 
@@ -871,7 +974,7 @@
     
     barChartView = [[JXBarChartView alloc] initWithFrame:frame
                                               startPoint:CGPointMake(20, 20)
-                                                  values:values maxValue:10
+                                                  values:values maxValue:100
                                           textIndicators:textIndicators
                                                textColor:[UIColor colorWithRed:(float)135/255.0 green:(float)135/255.0 blue:(float)135/255.0 alpha:1.0f]
                                                barHeight:30
@@ -885,7 +988,16 @@
 
     if (![okBtn.titleLabel.text isEqualToString:@"Auto Play"]) {
 
-        [self StartAction];
+        [timer invalidate];
+        timer = nil;
+        [okBtn setTitle:@"Auto Play" forState:UIControlStateNormal];
+        
+        sleep(1);
+        NSDictionary * temp = [NSDictionary dictionaryWithObjectsAndKeys:@"7",@"index", nil];
+        [self getRequest:2 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+        WeekSlider.enabled = YES;
+        slider.enabled = YES;
+
     }
 }
 

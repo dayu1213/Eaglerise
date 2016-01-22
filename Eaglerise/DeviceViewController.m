@@ -9,6 +9,8 @@
 #import "DeviceViewController.h"
 #import "SVProgressHUD.h"
 #import <CoreBluetooth/CoreBluetooth.h>
+//#import "AppDelegate.h"
+
 
 @interface DeviceViewController ()<UITableViewDataSource,UITableViewDelegate>
 {
@@ -20,7 +22,7 @@
     NSArray *characteristics;
     int indexRow;
     NSUserDefaults *userdefaults;
-    
+//    AppDelegate * mydelegate;
     CBPeripheral *peripheralTest;
     
 }
@@ -39,7 +41,7 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(roadBLEAction:) name:@"roadBLE" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(roadingAction) name:@"Refresh" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(Disconnect) name:@"DisconnectBtnClick" object:nil];
-    
+//        mydelegate = (AppDelegate *)[[UIApplication sharedApplication]delegate];
         
     }
     return self;
@@ -257,7 +259,8 @@
     indexRow = (int)indexPath.row;
 //    [self readRequest:2 requestDic:temp currPeripheral:[peripherals objectAtIndex:indexPath.row] characteristicArray:characteristics delegate:self Baby:self->baby callFrom:DeviceTypeRead];
 //
-    
+//    mydelegate.number = 0;
+//    mydelegate.number2 = 0;
     [baby cancelScan];
     
     CBPeripheral *peripheral = [peripherals objectAtIndex:indexPath.row];
@@ -438,7 +441,7 @@
         [indexPaths addObject:indexPath];
         [peripherals addObject:peripheral];
         [peripheralsAD addObject:advertisementData];
-        [DeviceName addObject:peripheral.name];
+        [DeviceName addObject:[advertisementData objectForKey:@"kCBAdvDataLocalName"]];
         if(abs(RSSI)>=-40)
         {
             [RSSIArray addObject:@"signal1"];
@@ -535,8 +538,14 @@
     [baby cancelAllPeripheralsConnection];
     [baby cancelPeripheralConnection:peripheralTest];
     
-//    [baby stop];
+    [baby stop];
 //    [indexPaths addObject:indexPath];
+    
+    //初始化BabyBluetooth 蓝牙库
+    baby = [BabyBluetooth shareBabyBluetooth];
+    //设置蓝牙委托
+    [self babyDelegate];
+    
     [peripherals removeAllObjects];
     peripherals = nil;
     peripherals = [[NSMutableArray alloc] init];

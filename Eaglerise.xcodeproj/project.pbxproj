@@ -407,7 +407,6 @@
 				TargetAttributes = {
 					20030A941BE34EAD006B8CD2 = {
 						CreatedOnToolsVersion = 7.0.1;
-						DevelopmentTeam = Q54M79SNP2;
 					};
 					20030AAD1BE34EAD006B8CD2 = {
 						CreatedOnToolsVersion = 7.0.1;
@@ -565,7 +564,8 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: E3Control Incorporation (Q54M79SNP2)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: E3Control Incorporation (Q54M79SNP2)";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -587,6 +587,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE = "627d05c6-1b2e-476c-b5bf-50547e71f01f";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -608,7 +609,8 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: E3Control Incorporation (Q54M79SNP2)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: E3Control Incorporation (Q54M79SNP2)";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -623,6 +625,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				PROVISIONING_PROFILE = "627d05c6-1b2e-476c-b5bf-50547e71f01f";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -636,9 +639,9 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PREFIX_HEADER = "Eaglerise/Eaglerise-Prefix.pch";
 				INFOPLIST_FILE = Eaglerise/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.e3.E3Light.BlueClient.Eaglerise;
+				PRODUCT_BUNDLE_IDENTIFIER = com.e3.BlueClient.Eaglerise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 			};
@@ -652,9 +655,9 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PREFIX_HEADER = "Eaglerise/Eaglerise-Prefix.pch";
 				INFOPLIST_FILE = Eaglerise/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.e3.E3Light.BlueClient.Eaglerise;
+				PRODUCT_BUNDLE_IDENTIFIER = com.e3.BlueClient.Eaglerise;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 			};
@@ -664,10 +667,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: E3Control Incorporation (Q54M79SNP2)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: E3Control Incorporation (Q54M79SNP2)";
 				INFOPLIST_FILE = EagleriseTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "-.0.EagleriseTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "627d05c6-1b2e-476c-b5bf-50547e71f01f";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Eaglerise.app/Eaglerise";
 			};
 			name = Debug;
@@ -676,10 +682,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: E3Control Incorporation (Q54M79SNP2)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: E3Control Incorporation (Q54M79SNP2)";
 				INFOPLIST_FILE = EagleriseTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "-.0.EagleriseTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "627d05c6-1b2e-476c-b5bf-50547e71f01f";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Eaglerise.app/Eaglerise";
 			};
 			name = Release;
@@ -687,10 +696,13 @@
 		20030AC91BE34EAE006B8CD2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Distribution: E3Control Incorporation (Q54M79SNP2)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: E3Control Incorporation (Q54M79SNP2)";
 				INFOPLIST_FILE = EagleriseUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "-.0.EagleriseUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "627d05c6-1b2e-476c-b5bf-50547e71f01f";
 				TEST_TARGET_NAME = Eaglerise;
 				USES_XCTRUNNER = YES;
 			};
@@ -699,10 +711,13 @@
 		20030ACA1BE34EAE006B8CD2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Distribution: E3Control Incorporation (Q54M79SNP2)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: E3Control Incorporation (Q54M79SNP2)";
 				INFOPLIST_FILE = EagleriseUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "-.0.EagleriseUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "627d05c6-1b2e-476c-b5bf-50547e71f01f";
 				TEST_TARGET_NAME = Eaglerise;
 				USES_XCTRUNNER = YES;
 			};

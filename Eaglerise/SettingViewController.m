@@ -10,6 +10,8 @@
 #import "AppDelegate.h"
 #define channelOnPeropheralView @"SettingView"
 #define FONTSIZE 14
+#define HIGHTLBL 30
+
 @interface SettingViewController ()<UITextFieldDelegate,UIScrollViewDelegate,UIPickerViewDataSource,UIPickerViewDelegate,CBCentralManagerDelegate,CBPeripheralDelegate,CBPeripheralManagerDelegate,UIActionSheetDelegate>
 {
     float textHeight;
@@ -38,7 +40,11 @@
     NSString * loadName;
     int channelIndex;
     NSMutableDictionary* channelDic;
+    NSArray *keys;
     NSTimer * timer;
+    
+    NSTimer * tm;
+
     UILabel * timeLabel;
     
     NSString * trunOnStr;
@@ -50,7 +56,8 @@
     UILabel * minLbl;
     UISwitch * fristSwitch;
     UISwitch * secondSwitch;
-    
+    //0为未设置，1为设置。如果全为0则清除原有数据。
+    NSMutableArray * nightlyArray;
     
 }
 @property (nonatomic,strong) UITextField * deviceNameTxt,* channelTxt;
@@ -91,7 +98,9 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadDataAction:) name:@"loadSetting" object:nil];
          [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateDeviceName) name:@"updateDeviceName2" object:nil];
         mydelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
-        
+        mydelegate=(AppDelegate*)[[UIApplication sharedApplication]delegate];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(stopReadTime) name:@"readTimeStop" object:nil];
+
     }
     return self;
 }
@@ -176,9 +185,9 @@
     
 #pragma mark pickerArray更改
 //    pickerArray = [[NSMutableArray alloc]initWithObjects:@"channel 1",@"channel 2",@"channel 3",@"channel 4", nil];
-    pickerArray = [[NSMutableArray alloc]initWithObjects:@"channel 1",@"channel 2",@"channel 3", nil];
+    pickerArray = [[NSMutableArray alloc]init];
 
-
+    
     
     pickerArray2 = [[NSArray alloc]initWithObjects:@"Nightly",@"SUN/MON",@"MON/TUE",@"TUE/WED",@"WED/THU",@"THU/FRI",@"FRI/SAT",@"SAT/SUN",nil];
     
@@ -186,6 +195,8 @@
     pickerArray4 = [[NSArray alloc]initWithObjects:@"0",@"15",@"30",@"45",nil];
     pickerArray5 = [[NSArray alloc]initWithObjects:@"0",@"1",@"2",@"3",nil];
     pickerArray6 = [[NSMutableArray alloc]init];
+    nightlyArray = [[NSMutableArray alloc]initWithObjects:@"0",@"0",@"0",@"0",nil];
+    
     for(int i= 0;i<24;i++)
     {
         [pickerArray6 addObject:[NSString stringWithFormat:@"%d",i]];
@@ -201,7 +212,9 @@
     SettingDic = [[NSMutableDictionary alloc]init];
     channelDic = [[NSMutableDictionary alloc]init];
     loading = NO;
+#pragma mark 获取SettingDic
     SettingDic = [NSMutableDictionary dictionaryWithDictionary:[userdefaults objectForKey:@"setting"]];
+    [self addDefaultDicToSettingDic];
     channelIndex = 1;
     CH = 1;
     WEEK=-1;
@@ -213,20 +226,7 @@
     second3 = @"0";
     hour4 = @"3";
     second4 = @"0";
-    if ([userdefaults objectForKey:@"channel1"]!=nil) {
-        [pickerArray replaceObjectAtIndex:0 withObject:[userdefaults objectForKey:@"channel1"]];
-    }
-    if ([userdefaults objectForKey:@"channel2"]!=nil) {
-        [pickerArray replaceObjectAtIndex:1 withObject:[userdefaults objectForKey:@"channel2"]];
-    }
-    if ([userdefaults objectForKey:@"channel3"]!=nil) {
-        [pickerArray replaceObjectAtIndex:2 withObject:[userdefaults objectForKey:@"channel3"]];
-    }
-    
-#pragma mark pickerArray
-//    if ([userdefaults objectForKey:@"channel4"]!=nil) {
-//        [pickerArray replaceObjectAtIndex:3 withObject:[userdefaults objectForKey:@"channel4"]];
-//    }
+
 
 }
 
@@ -578,6 +578,7 @@
     timeLabel.textColor = [UIColor blackColor];
     timeLabel.font = [UIFont systemFontOfSize:14];
     Label.center = CGPointMake(70, timeLabel.center.y);
+    [timeLabel setTextAlignment:NSTextAlignmentRight];
     [contentSView addSubview:timeLabel];
     
     Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 480, Device_Wdith-60, 1.5)];
@@ -609,15 +610,21 @@
 //    [self.view addGestureRecognizer:tapGr];
     
     [self roadPopView];
-    channelDic = [userdefaults objectForKey:@"settinglast"];
+#pragma mark channelDic初始化
+    channelDic.dictionary = [userdefaults objectForKey:@"settinglast"];
     if (channelDic != nil) {
-        setDic = [NSMutableDictionary dictionaryWithDictionary:[channelDic objectForKey:[NSString stringWithFormat:@"%d",channelIndex]]];
-        loadName = [userdefaults objectForKey:@"loadName"];
-        [self loadMessage:setDic];
+#pragma mark setDic 初始化数据 xiugai
+//        setDic = [NSMutableDictionary dictionaryWithDictionary:[channelDic objectForKey:[NSString stringWithFormat:@"%d",channelIndex]]];
+//        loadName = [userdefaults objectForKey:@"loadName"];
+        
+        
+        
+//        [self loadMessage:setDic];
     }else
     {
         channelDic = [[NSMutableDictionary alloc]init];
     }
+//    NSLog(@"channelDic==%@    setDic ==%@ settingDic==%@",channelDic,setDic,SettingDic);
 
 }
 
@@ -632,7 +639,7 @@
 //    UITapGestureRecognizer *tapGr = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
 ////    tapGr.cancelsTouchesInView = NO;
 //    [PopView addGestureRecognizer:tapGr];
-    
+  /*
     FirstView = [[UIView alloc]initWithFrame:CGRectMake(0, Device_Height-459 , Device_Wdith, 400)];
     [FirstView setBackgroundColor:[UIColor whiteColor]];
     //    [PopView setAlpha:0.2];
@@ -739,7 +746,8 @@
     
     
     
-    FristPicker = [[UIPickerView alloc]initWithFrame:CGRectMake(30, 186, Device_Wdith-60, 90)];
+    FristPicker = [[UIPickerView alloc]init];
+    FristPicker.frame= CGRectMake(30, 186, Device_Wdith-60, 90);
     FristPicker.delegate = self;
     FristPicker.dataSource = self;
     FristPicker.showsSelectionIndicator = YES;
@@ -791,14 +799,14 @@
     [FirstView addSubview:TurnOnSaveBtn];
     
     
-    SecondView = [[UIView alloc]initWithFrame:CGRectMake(0, Device_Height-459, Device_Wdith, 400)];
+    SecondView = [[UIView alloc]initWithFrame:CGRectMake(0, Device_Height-459, Device_Wdith, 440)];
     [SecondView setBackgroundColor:[UIColor whiteColor]];
     //    [PopView setAlpha:0.2];
 //    SecondView.center = PopView.center;
     [PopView addSubview:SecondView];
     
     CGFloat pointX = (Device_Wdith)/2.0f;
-    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(0, 0, pointX, 60)];
+    Lbl = [[UILabel alloc]initWithFrame:CGRectMake((Device_Wdith - pointX) / 2.0f, 0, pointX, 60)];
     Lbl.text = @"Frist Event";
     Lbl.font = [UIFont boldSystemFontOfSize:16];
     Lbl.backgroundColor = [UIColor clearColor];
@@ -832,7 +840,7 @@
     [SecondView addSubview:onLbl2];
 
     
-    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 61.5, Device_Wdith-120, 40)];
+    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 61.5 + 40, Device_Wdith-120, 40)];
     Lbl.text = @"Starting time";
     Lbl.font = [UIFont boldSystemFontOfSize:16];
     Lbl.backgroundColor = [UIColor clearColor];
@@ -842,13 +850,13 @@
     [SecondView addSubview:Lbl];
     
     
-    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 98.5, Device_Wdith-60, 1.5)];
+    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 98.5 + 40, Device_Wdith-60, 1.5)];
     
     Lbl.backgroundColor = [UIColor colorWithRed:(float)204/255.0 green:(float)204/255.0 blue:(float)204/255.0 alpha:1.0f];
     [SecondView addSubview:Lbl];
     
     SeconddatePicker  = [[UIDatePicker alloc]init];
-    SeconddatePicker.frame=CGRectMake(30, 120, Device_Wdith-60, 90);
+    SeconddatePicker.frame=CGRectMake(30, 120 + 40, Device_Wdith-60, 90);
     SeconddatePicker.locale = [[NSLocale alloc]initWithLocaleIdentifier:@"EN"];
     //[NSDate date]获取当前的时间，并把这个时间数据作为这个datePicker控件的初始化值
     //当然也可以使用自己定义的时间值，不过要用 NSDateFormatter 来进行设计 时间格式，进行转换成date类型
@@ -866,13 +874,13 @@
  
     //-----------
     
-    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 210, Device_Wdith-60, 1.5)];
+    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 210 + 40, Device_Wdith-60, 1.5)];
     
     Lbl.backgroundColor = [UIColor colorWithRed:(float)204/255.0 green:(float)204/255.0 blue:(float)204/255.0 alpha:1.0f];
 //    [SecondView addSubview:Lbl];
     
     
-    Secondslider = [[UISlider alloc] initWithFrame:CGRectMake(40, 275.5, Device_Wdith-80, 20)];
+    Secondslider = [[UISlider alloc] initWithFrame:CGRectMake(40, 275.5 + 40, Device_Wdith-80, 20)];
     Secondslider.minimumValue = 0;
     Secondslider.maximumValue = 100;
     Secondslider.minimumTrackTintColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
@@ -886,7 +894,7 @@
     [SecondView addSubview:Secondslider];
     
     
-    SecondLbl = [[UILabel alloc]initWithFrame:CGRectMake(Device_Wdith-110, 235.5, 80, 40)];
+    SecondLbl = [[UILabel alloc]initWithFrame:CGRectMake(Device_Wdith-110, 235.5 + 40, 80, 40)];
     SecondLbl.text = @"0%";
     SecondLbl.font = [UIFont boldSystemFontOfSize:16];
     SecondLbl.backgroundColor = [UIColor clearColor];
@@ -897,13 +905,13 @@
     //------------
     
     
-    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 300, Device_Wdith-60, 1.5)];
+    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 300 + 40, Device_Wdith-60, 1.5)];
     
     Lbl.backgroundColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
     [SecondView addSubview:Lbl];
     
     
-    FirstEventSaveBtn = [[UIButton alloc]initWithFrame:CGRectMake(30+(Device_Wdith-60)/4, 310.5, (Device_Wdith-60)/2, 40)];
+    FirstEventSaveBtn = [[UIButton alloc]initWithFrame:CGRectMake(30+(Device_Wdith-60)/4, 310.5 + 40, (Device_Wdith-60)/2, 40)];
     
     [FirstEventSaveBtn setBackgroundColor:[UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f]];
     [FirstEventSaveBtn setTitle:@"OK" forState:UIControlStateNormal];
@@ -959,7 +967,7 @@
     
     
     
-    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 61.5, Device_Wdith-120, 40)];
+    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 61.5 + 40, Device_Wdith-120, 40)];
     Lbl.text = @"Starting time";
     Lbl.font = [UIFont boldSystemFontOfSize:16];
     Lbl.backgroundColor = [UIColor clearColor];
@@ -969,13 +977,13 @@
     [ThirdView addSubview:Lbl];
     
     
-    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 98.5, Device_Wdith-60, 1.5)];
+    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 98.5 + 40, Device_Wdith-60, 1.5)];
     
     Lbl.backgroundColor = [UIColor colorWithRed:(float)204/255.0 green:(float)204/255.0 blue:(float)204/255.0 alpha:1.0f];
     [ThirdView addSubview:Lbl];
     
     ThirddatePicker  = [[UIDatePicker alloc]init];
-    ThirddatePicker.frame=CGRectMake(30, 100, Device_Wdith-60, 90);
+    ThirddatePicker.frame=CGRectMake(30, 100 + 40, Device_Wdith-60, 90);
     ThirddatePicker.locale = [[NSLocale alloc]initWithLocaleIdentifier:@"EN"];
     //[NSDate date]获取当前的时间，并把这个时间数据作为这个datePicker控件的初始化值
     //当然也可以使用自己定义的时间值，不过要用 NSDateFormatter 来进行设计 时间格式，进行转换成date类型
@@ -991,13 +999,13 @@
 //    [ThirdView addSubview:ThirdPicker];
     
     
-    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 210, Device_Wdith-60, 1.5)];
+    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 210 + 40, Device_Wdith-60, 1.5)];
     
     Lbl.backgroundColor = [UIColor colorWithRed:(float)204/255.0 green:(float)204/255.0 blue:(float)204/255.0 alpha:1.0f];
 //    [ThirdView addSubview:Lbl];
     
     //---
-    Thirdslider = [[UISlider alloc] initWithFrame:CGRectMake(40, 275.5, Device_Wdith-80, 20)];
+    Thirdslider = [[UISlider alloc] initWithFrame:CGRectMake(40, 275.5 + 40, Device_Wdith-80, 20)];
     Thirdslider.minimumValue = 0;
     Thirdslider.maximumValue = 100;
     Thirdslider.minimumTrackTintColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
@@ -1011,7 +1019,7 @@
     [ThirdView addSubview:Thirdslider];
     
     
-    ThirdLbl = [[UILabel alloc]initWithFrame:CGRectMake(Device_Wdith-110, 235.5, 80, 40)];
+    ThirdLbl = [[UILabel alloc]initWithFrame:CGRectMake(Device_Wdith-110, 235.5 + 40, 80, 40)];
     ThirdLbl.text = @"0%";
     ThirdLbl.font = [UIFont boldSystemFontOfSize:16];
     ThirdLbl.backgroundColor = [UIColor clearColor];
@@ -1024,7 +1032,7 @@
     
    
     
-    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 300, Device_Wdith-60, 1.5)];
+    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 300 + 40, Device_Wdith-60, 1.5)];
     
     Lbl.backgroundColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
     [ThirdView addSubview:Lbl];
@@ -1040,7 +1048,418 @@
     [SecondEventSaveBtn addTarget:self action:@selector(SecondEventSaveAction) forControlEvents:UIControlEventTouchUpInside];
     [SecondEventSaveBtn.titleLabel setFont:[UIFont systemFontOfSize:16]];
     [ThirdView addSubview:SecondEventSaveBtn];
+    */
     
+    
+    FirstView = [[UIView alloc]initWithFrame:CGRectMake(0, Device_Height-459 , Device_Wdith, 400)];
+    [FirstView setBackgroundColor:[UIColor whiteColor]];
+    //    [PopView setAlpha:0.2];
+    //    FirstView.center = PopView.center;
+    [PopView addSubview:FirstView];
+    CGFloat pointX = (Device_Wdith)/2.0f;
+    
+    onLbl = [[UILabel alloc]initWithFrame:CGRectMake( pointX/2.0f, 10,pointX, HIGHTLBL)];
+    onLbl.text = @"Turn on";
+    onLbl.font = [UIFont boldSystemFontOfSize:16];
+    onLbl.backgroundColor = [UIColor clearColor];
+    onLbl.textColor = [UIColor colorWithRed:(float)135/255.0 green:(float)135/255.0 blue:(float)135/255.0 alpha:1.0f];
+    onLbl.textAlignment = NSTextAlignmentCenter;
+    
+    [FirstView addSubview:onLbl];
+    
+    
+    
+    UILabel * Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 60, Device_Wdith-60, 1.5)];
+    
+    Lbl.backgroundColor = [UIColor colorWithRed:(float)204/255.0 green:(float)204/255.0 blue:(float)204/255.0 alpha:1.0f];
+    [FirstView addSubview:Lbl];
+    
+    ExactlyBtn = [[UIButton alloc]initWithFrame:CGRectMake(30, 61.5, Device_Wdith-120, 40)];
+    [ExactlyBtn setTitle:@"Exactly at Sunset" forState:UIControlStateNormal];
+    [ExactlyBtn setTitleColor:[UIColor colorWithRed:(float)135/255.0 green:(float)135/255.0 blue:(float)135/255.0 alpha:1.0f] forState:UIControlStateNormal];
+    [ExactlyBtn setTitleColor:[UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f] forState:UIControlStateSelected];
+    
+    ExactlyBtn.titleLabel.font = [UIFont boldSystemFontOfSize:16];
+    ExactlyBtn.backgroundColor = [UIColor clearColor];
+    
+    ExactlyBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+    [ExactlyBtn addTarget:self action:@selector(ExactlyAction:) forControlEvents:UIControlEventTouchUpInside];
+    [FirstView addSubview:ExactlyBtn];
+    
+    ivImageV = [[UIImageView alloc]initWithFrame:CGRectMake(Device_Wdith-66, 69.5, 32, 20)];
+    ivImageV.image = [UIImage imageNamed:@"duihao"];
+    
+    [FirstView addSubview:ivImageV];
+    
+    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 101.5, Device_Wdith-60, 1.5)];
+    
+    Lbl.backgroundColor = [UIColor colorWithRed:(float)204/255.0 green:(float)204/255.0 blue:(float)204/255.0 alpha:1.0f];
+    [FirstView addSubview:Lbl];
+    
+    AfterBtn = [[UIButton alloc]initWithFrame:CGRectMake(30, 103, Device_Wdith-120, 40)];
+    [AfterBtn setTitle:@"After Sunset" forState:UIControlStateNormal];
+    [AfterBtn setTitleColor:[UIColor colorWithRed:(float)135/255.0 green:(float)135/255.0 blue:(float)135/255.0 alpha:1.0f] forState:UIControlStateNormal];
+    [AfterBtn setTitleColor:[UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f] forState:UIControlStateSelected];
+    
+    AfterBtn.titleLabel.font = [UIFont boldSystemFontOfSize:16];
+    AfterBtn.backgroundColor = [UIColor clearColor];
+    
+    AfterBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+    [AfterBtn addTarget:self action:@selector(AfterAction:) forControlEvents:UIControlEventTouchUpInside];    [FirstView addSubview:AfterBtn];
+    
+    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 143, Device_Wdith-60, 1.5)];
+    
+    Lbl.backgroundColor = [UIColor colorWithRed:(float)204/255.0 green:(float)204/255.0 blue:(float)204/255.0 alpha:1.0f];
+    [FirstView addSubview:Lbl];
+    
+    SpecificBtn = [[UIButton alloc]initWithFrame:CGRectMake(30, 144.5, Device_Wdith-120, 40)];
+    [SpecificBtn setTitle:@"Specific Time" forState:UIControlStateNormal];
+    [SpecificBtn setTitleColor:[UIColor colorWithRed:(float)135/255.0 green:(float)135/255.0 blue:(float)135/255.0 alpha:1.0f] forState:UIControlStateNormal];
+    [SpecificBtn setTitleColor:[UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f] forState:UIControlStateSelected];
+    
+    SpecificBtn.titleLabel.font = [UIFont boldSystemFontOfSize:16];
+    SpecificBtn.backgroundColor = [UIColor clearColor];
+    
+    SpecificBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+    [SpecificBtn addTarget:self action:@selector(SpecificAction:) forControlEvents:UIControlEventTouchUpInside];
+    [FirstView addSubview:SpecificBtn];
+    
+    
+    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 184.5, Device_Wdith-60, 1.5)];
+    
+    Lbl.backgroundColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
+    [FirstView addSubview:Lbl];
+    
+    
+    FristdatePicker  = [[UIDatePicker alloc]init];
+    FristdatePicker.frame=CGRectMake(30, 186, Device_Wdith-60, 90);
+    FristdatePicker.locale = [[NSLocale alloc]initWithLocaleIdentifier:@"EN"];
+    //[NSDate date]获取当前的时间，并把这个时间数据作为这个datePicker控件的初始化值
+    //当然也可以使用自己定义的时间值，不过要用 NSDateFormatter 来进行设计 时间格式，进行转换成date类型
+    FristdatePicker.date = [NSDate date];
+    FristdatePicker.datePickerMode = UIDatePickerModeTime;
+    //把这个控件添加到view中
+    [FirstView addSubview:FristdatePicker];
+    
+    hourLbl = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
+    hourLbl.text = @"hour";
+    [hourLbl setTextAlignment:NSTextAlignmentCenter];
+    hourLbl.hidden = YES;
+    hourLbl.center = FristdatePicker.center;
+    [FirstView addSubview:hourLbl];
+    
+    minLbl = [[UILabel alloc] initWithFrame:CGRectMake(Device_Wdith - 80,hourLbl.frame.origin.y, 40, 40)];
+    minLbl.text = @"min";
+    minLbl.hidden = YES;
+    [hourLbl setTextAlignment:NSTextAlignmentRight];
+    [FirstView addSubview:minLbl];
+    
+    
+    
+    
+    
+    FristPicker = [[UIPickerView alloc]init];
+    FristPicker.frame= CGRectMake(30, 186, Device_Wdith-60, 90);
+    FristPicker.delegate = self;
+    FristPicker.dataSource = self;
+    FristPicker.showsSelectionIndicator = YES;
+    [FirstView addSubview:FristPicker];
+    
+    
+    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 276, Device_Wdith-60, 1.5)];
+    
+    Lbl.backgroundColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
+    //    [FirstView addSubview:Lbl];
+    
+    Fristslider = [[UISlider alloc] initWithFrame:CGRectMake(40, 288.5, Device_Wdith-120, 20)];
+    Fristslider.minimumValue = 0;
+    Fristslider.maximumValue = 100;
+    Fristslider.minimumTrackTintColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
+    Fristslider.thumbTintColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
+    Fristslider.maximumTrackTintColor = [UIColor colorWithRed:(float)202/255.0 green:(float)202/255.0 blue:(float)202/255.0 alpha:1.0f];
+    Fristslider.value = 0;
+    //        [slider setThumbImage:[UIImage imageNamed:@"DeviceSel"] forState:UIControlStateNormal];
+    //        [slider setThumbImage:[UIImage imageNamed:@"DeviceSel"] forState:UIControlStateHighlighted];
+    [Fristslider addTarget:self action:@selector(FirstValue:) forControlEvents:UIControlEventValueChanged];
+    
+    [FirstView addSubview:Fristslider];
+    
+    
+    FristLbl = [[UILabel alloc]initWithFrame:CGRectMake(Device_Wdith-70, 278.5, 80, 40)];
+    FristLbl.text = @"0%";
+    FristLbl.font = [UIFont boldSystemFontOfSize:16];
+    FristLbl.backgroundColor = [UIColor clearColor];
+    FristLbl.textColor = [UIColor colorWithRed:(float)135/255.0 green:(float)135/255.0 blue:(float)135/255.0 alpha:1.0f];
+    FristLbl.textAlignment = NSTextAlignmentLeft;
+    
+    [FirstView addSubview:FristLbl];
+    
+    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 318.5, Device_Wdith-60, 1.5)];
+    
+    Lbl.backgroundColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
+    //    [FirstView addSubview:Lbl];
+    
+    TurnOnSaveBtn = [[UIButton alloc]initWithFrame:CGRectMake(30+(Device_Wdith-60)/4, 330, (Device_Wdith-60)/2, 40)];
+    
+    [TurnOnSaveBtn setBackgroundColor:[UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f]];
+    [TurnOnSaveBtn setTitle:@"OK" forState:UIControlStateNormal];
+    [TurnOnSaveBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    //    [okBtn.titleLabel setFont:[UIFont systemFontOfSize:18]];
+    TurnOnSaveBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
+    [TurnOnSaveBtn addTarget:self action:@selector(TurnOnSaveAction) forControlEvents:UIControlEventTouchUpInside];
+    [TurnOnSaveBtn.titleLabel setFont:[UIFont systemFontOfSize:16]];
+    [FirstView addSubview:TurnOnSaveBtn];
+    
+    
+    SecondView = [[UIView alloc]initWithFrame:CGRectMake(0, Device_Height-459, Device_Wdith, 440)];
+    [SecondView setBackgroundColor:[UIColor whiteColor]];
+    //    [PopView setAlpha:0.2];
+    //    SecondView.center = PopView.center;
+    [PopView addSubview:SecondView];
+    
+    Lbl = [[UILabel alloc]initWithFrame:CGRectMake((Device_Wdith - pointX) / 2.0f, 0, pointX, HIGHTLBL)];
+    Lbl.text = @"Frist Event";
+    Lbl.font = [UIFont boldSystemFontOfSize:16];
+    Lbl.backgroundColor = [UIColor clearColor];
+    Lbl.textColor = [UIColor colorWithRed:(float)135/255.0 green:(float)135/255.0 blue:(float)135/255.0 alpha:1.0f];
+    Lbl.textAlignment = NSTextAlignmentCenter;
+    
+    [SecondView addSubview:Lbl];
+    
+#pragma mark 添加按钮1
+    
+    UILabel * offLbl = [[UILabel alloc] initWithFrame:CGRectMake(pointX -110, 40, 80, HIGHTLBL)];
+    offLbl.text = @"Disable";
+    offLbl.font = [UIFont boldSystemFontOfSize:16];
+    offLbl.backgroundColor = [UIColor clearColor];
+    offLbl.textColor = [UIColor colorWithRed:(float)135/255.0 green:(float)135/255.0 blue:(float)135/255.0 alpha:1.0f];
+    offLbl.textAlignment = NSTextAlignmentRight;
+    [SecondView addSubview:offLbl];
+    
+    fristSwitch  = [[UISwitch alloc] initWithFrame:CGRectMake(pointX - 30, 40, 60, HIGHTLBL)];
+    fristSwitch.on = YES;
+    fristSwitch.onTintColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
+    [fristSwitch addTarget:self action:@selector(fristSwitchHide) forControlEvents:UIControlEventValueChanged];
+    [SecondView addSubview:fristSwitch];
+    
+    UILabel * onLbl2 = [[UILabel alloc] initWithFrame:CGRectMake(pointX + 30, 40, 80, HIGHTLBL)];
+    onLbl2.text = @"Enable";
+    onLbl2.font = [UIFont boldSystemFontOfSize:16];
+    onLbl2.backgroundColor = [UIColor clearColor];
+    onLbl2.textColor = [UIColor colorWithRed:(float)135/255.0 green:(float)135/255.0 blue:(float)135/255.0 alpha:1.0f];
+    onLbl2.textAlignment = NSTextAlignmentLeft;
+    [SecondView addSubview:onLbl2];
+    
+    
+    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, HIGHTLBL + 40, Device_Wdith-120, 40)];
+    Lbl.text = @"Starting time";
+    Lbl.font = [UIFont boldSystemFontOfSize:16];
+    Lbl.backgroundColor = [UIColor clearColor];
+    Lbl.textColor = [UIColor colorWithRed:(float)135/255.0 green:(float)135/255.0 blue:(float)135/255.0 alpha:1.0f];
+    Lbl.textAlignment = NSTextAlignmentLeft;
+    
+    [SecondView addSubview:Lbl];
+    
+    
+    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, HIGHTLBL + 80, Device_Wdith-60, 1.5)];
+    
+    Lbl.backgroundColor = [UIColor colorWithRed:(float)204/255.0 green:(float)204/255.0 blue:(float)204/255.0 alpha:1.0f];
+    [SecondView addSubview:Lbl];
+    
+    SeconddatePicker  = [[UIDatePicker alloc]init];
+    SeconddatePicker.frame=CGRectMake(30, HIGHTLBL + 85, Device_Wdith-60, 90);
+    SeconddatePicker.locale = [[NSLocale alloc]initWithLocaleIdentifier:@"EN"];
+    //[NSDate date]获取当前的时间，并把这个时间数据作为这个datePicker控件的初始化值
+    //当然也可以使用自己定义的时间值，不过要用 NSDateFormatter 来进行设计 时间格式，进行转换成date类型
+    SeconddatePicker.date = [NSDate date];
+    SeconddatePicker.datePickerMode = UIDatePickerModeTime;
+    //把这个控件添加到view中
+    [SecondView addSubview:SeconddatePicker];
+    
+    //    SecondPicker = [[UIPickerView alloc]initWithFrame:CGRectMake(30, 120, Device_Wdith-60, 90)];
+    //    SecondPicker.delegate = self;
+    //    SecondPicker.dataSource = self;
+    //    SecondPicker.showsSelectionIndicator = YES;
+    //    [SecondView addSubview:SecondPicker];
+    
+    
+    //-----------
+    
+    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 210 + 40, Device_Wdith-60, 1.5)];
+    
+    Lbl.backgroundColor = [UIColor colorWithRed:(float)204/255.0 green:(float)204/255.0 blue:(float)204/255.0 alpha:1.0f];
+    //    [SecondView addSubview:Lbl];
+    
+    
+    Secondslider = [[UISlider alloc] initWithFrame:CGRectMake(40, 265 + HIGHTLBL, Device_Wdith-80, 20)];
+    Secondslider.minimumValue = 0;
+    Secondslider.maximumValue = 100;
+    Secondslider.minimumTrackTintColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
+    Secondslider.thumbTintColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
+    Secondslider.maximumTrackTintColor = [UIColor colorWithRed:(float)202/255.0 green:(float)202/255.0 blue:(float)202/255.0 alpha:1.0f];
+    Secondslider.value = 0;
+    //        [slider setThumbImage:[UIImage imageNamed:@"DeviceSel"] forState:UIControlStateNormal];
+    //        [slider setThumbImage:[UIImage imageNamed:@"DeviceSel"] forState:UIControlStateHighlighted];
+    [Secondslider addTarget:self action:@selector(SecondValue:) forControlEvents:UIControlEventValueChanged];
+    
+    [SecondView addSubview:Secondslider];
+    
+    
+    SecondLbl = [[UILabel alloc]initWithFrame:CGRectMake(Device_Wdith-110, 225 + HIGHTLBL, 80, 40)];
+    SecondLbl.text = @"0%";
+    SecondLbl.font = [UIFont boldSystemFontOfSize:16];
+    SecondLbl.backgroundColor = [UIColor clearColor];
+    SecondLbl.textColor = [UIColor colorWithRed:(float)135/255.0 green:(float)135/255.0 blue:(float)135/255.0 alpha:1.0f];
+    SecondLbl.textAlignment = NSTextAlignmentLeft;
+    
+    [SecondView addSubview:SecondLbl];
+    //------------
+    
+    
+    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 290 + HIGHTLBL, Device_Wdith-60, 1.5)];
+    
+    Lbl.backgroundColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
+    [SecondView addSubview:Lbl];
+    
+    
+    FirstEventSaveBtn = [[UIButton alloc]initWithFrame:CGRectMake(30+(Device_Wdith-60)/4, 300 + HIGHTLBL, (Device_Wdith-60)/2, 40)];
+    
+    [FirstEventSaveBtn setBackgroundColor:[UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f]];
+    [FirstEventSaveBtn setTitle:@"OK" forState:UIControlStateNormal];
+    [FirstEventSaveBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    //    [okBtn.titleLabel setFont:[UIFont systemFontOfSize:18]];
+    FirstEventSaveBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
+    [FirstEventSaveBtn addTarget:self action:@selector(FirstEventSaveAction) forControlEvents:UIControlEventTouchUpInside];
+    [FirstEventSaveBtn.titleLabel setFont:[UIFont systemFontOfSize:16]];
+    [SecondView addSubview:FirstEventSaveBtn];
+    
+    
+    
+    
+    //==============
+    ThirdView = [[UIView alloc]initWithFrame:CGRectMake(0, Device_Height-459, Device_Wdith, 440)];
+    [ThirdView setBackgroundColor:[UIColor whiteColor]];
+    //    [PopView setAlpha:0.2];
+    //    ThirdView.center = PopView.center;
+    [PopView addSubview:ThirdView];
+#pragma mark 添加按钮2
+    
+    UILabel * offLbl2 = [[UILabel alloc] initWithFrame:CGRectMake(pointX -110, 40, 80, HIGHTLBL)];
+    offLbl2.text = @"Disabel";
+    offLbl2.font = [UIFont boldSystemFontOfSize:16];
+    offLbl2.backgroundColor = [UIColor clearColor];
+    offLbl2.textColor = [UIColor colorWithRed:(float)135/255.0 green:(float)135/255.0 blue:(float)135/255.0 alpha:1.0f];
+    offLbl2.textAlignment = NSTextAlignmentRight;
+    [ThirdView addSubview:offLbl2];
+    
+    secondSwitch  = [[UISwitch alloc] initWithFrame:CGRectMake(pointX - 30, 40, 60, HIGHTLBL)];
+    secondSwitch.on = YES;
+    secondSwitch.onTintColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
+    [secondSwitch addTarget:self action:@selector(secondSwitchHide) forControlEvents:UIControlEventValueChanged];
+    [ThirdView addSubview:secondSwitch];
+    
+    UILabel * onLbl3 = [[UILabel alloc] initWithFrame:CGRectMake(pointX + 30, 40, 80, HIGHTLBL)];
+    onLbl3.text = @"Enable";
+    onLbl3.font = [UIFont boldSystemFontOfSize:16];
+    onLbl3.backgroundColor = [UIColor clearColor];
+    onLbl3.textColor = [UIColor colorWithRed:(float)135/255.0 green:(float)135/255.0 blue:(float)135/255.0 alpha:1.0f];
+    onLbl3.textAlignment = NSTextAlignmentLeft;
+    [ThirdView addSubview:onLbl3];
+    
+    
+    Lbl = [[UILabel alloc]initWithFrame:CGRectMake((Device_Wdith - pointX) / 2.0f, 0, pointX, HIGHTLBL)];
+    Lbl.text = @"Second Event";
+    Lbl.font = [UIFont boldSystemFontOfSize:16];
+    Lbl.backgroundColor = [UIColor clearColor];
+    Lbl.textColor = [UIColor colorWithRed:(float)135/255.0 green:(float)135/255.0 blue:(float)135/255.0 alpha:1.0f];
+    Lbl.textAlignment = NSTextAlignmentCenter;
+    
+    [ThirdView addSubview:Lbl];
+    
+    
+    
+    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, HIGHTLBL + 40, Device_Wdith-120, 40)];
+    Lbl.text = @"Starting time";
+    Lbl.font = [UIFont boldSystemFontOfSize:16];
+    Lbl.backgroundColor = [UIColor clearColor];
+    Lbl.textColor = [UIColor colorWithRed:(float)135/255.0 green:(float)135/255.0 blue:(float)135/255.0 alpha:1.0f];
+    Lbl.textAlignment = NSTextAlignmentLeft;
+    
+    [ThirdView addSubview:Lbl];
+    
+    
+    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, HIGHTLBL + 80, Device_Wdith-60, 1.5)];
+    
+    Lbl.backgroundColor = [UIColor colorWithRed:(float)204/255.0 green:(float)204/255.0 blue:(float)204/255.0 alpha:1.0f];
+    [ThirdView addSubview:Lbl];
+    
+    ThirddatePicker  = [[UIDatePicker alloc]init];
+    ThirddatePicker.frame=CGRectMake(30, HIGHTLBL + 85, Device_Wdith-60, 90);
+    ThirddatePicker.locale = [[NSLocale alloc]initWithLocaleIdentifier:@"EN"];
+    //[NSDate date]获取当前的时间，并把这个时间数据作为这个datePicker控件的初始化值
+    //当然也可以使用自己定义的时间值，不过要用 NSDateFormatter 来进行设计 时间格式，进行转换成date类型
+    ThirddatePicker.date = [NSDate date];
+    ThirddatePicker.datePickerMode = UIDatePickerModeTime;
+    //把这个控件添加到view中
+    [ThirdView addSubview:ThirddatePicker];
+    
+    //    ThirdPicker = [[UIPickerView alloc]initWithFrame:CGRectMake(30, 100, Device_Wdith-60, 90)];
+    //    ThirdPicker.delegate = self;
+    //    ThirdPicker.dataSource = self;
+    //    ThirdPicker.showsSelectionIndicator = YES;
+    //    [ThirdView addSubview:ThirdPicker];
+    
+    
+    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 2*HIGHTLBL + 220, Device_Wdith-60, 1.5)];
+    
+    Lbl.backgroundColor = [UIColor colorWithRed:(float)204/255.0 green:(float)204/255.0 blue:(float)204/255.0 alpha:1.0f];
+    //    [ThirdView addSubview:Lbl];
+    
+    //---
+    Thirdslider = [[UISlider alloc] initWithFrame:CGRectMake(40, 265 + HIGHTLBL, Device_Wdith-80, 20)];
+    Thirdslider.minimumValue = 0;
+    Thirdslider.maximumValue = 100;
+    Thirdslider.minimumTrackTintColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
+    Thirdslider.thumbTintColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
+    Thirdslider.maximumTrackTintColor = [UIColor colorWithRed:(float)202/255.0 green:(float)202/255.0 blue:(float)202/255.0 alpha:1.0f];
+    Thirdslider.value = 0;
+    //        [slider setThumbImage:[UIImage imageNamed:@"DeviceSel"] forState:UIControlStateNormal];
+    //        [slider setThumbImage:[UIImage imageNamed:@"DeviceSel"] forState:UIControlStateHighlighted];
+    [Thirdslider addTarget:self action:@selector(ThirdValue:) forControlEvents:UIControlEventValueChanged];
+    
+    [ThirdView addSubview:Thirdslider];
+    
+    
+    ThirdLbl = [[UILabel alloc]initWithFrame:CGRectMake(Device_Wdith-110, 225 + HIGHTLBL, 80, 40)];
+    ThirdLbl.text = @"0%";
+    ThirdLbl.font = [UIFont boldSystemFontOfSize:16];
+    ThirdLbl.backgroundColor = [UIColor clearColor];
+    ThirdLbl.textColor = [UIColor colorWithRed:(float)135/255.0 green:(float)135/255.0 blue:(float)135/255.0 alpha:1.0f];
+    ThirdLbl.textAlignment = NSTextAlignmentLeft;
+    
+    [ThirdView addSubview:ThirdLbl];
+    
+    //--/
+    
+    
+    
+    Lbl = [[UILabel alloc]initWithFrame:CGRectMake(30, 290 + HIGHTLBL, Device_Wdith-60, 1.5)];
+    
+    Lbl.backgroundColor = [UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f];
+    [ThirdView addSubview:Lbl];
+    
+    
+    SecondEventSaveBtn = [[UIButton alloc]initWithFrame:CGRectMake(30+(Device_Wdith-60)/4, 300 + HIGHTLBL, (Device_Wdith-60)/2, 40)];
+    
+    [SecondEventSaveBtn setBackgroundColor:[UIColor colorWithRed:(float)10/255.0 green:(float)182/255.0 blue:(float)248/255.0 alpha:1.0f]];
+    [SecondEventSaveBtn setTitle:@"OK" forState:UIControlStateNormal];
+    [SecondEventSaveBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    //    [okBtn.titleLabel setFont:[UIFont systemFontOfSize:18]];
+    SecondEventSaveBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentCenter;
+    [SecondEventSaveBtn addTarget:self action:@selector(SecondEventSaveAction) forControlEvents:UIControlEventTouchUpInside];
+    [SecondEventSaveBtn.titleLabel setFont:[UIFont systemFontOfSize:16]];
+    [ThirdView addSubview:SecondEventSaveBtn];
+
     
     UIButton * closeBtn = [[UIButton alloc]initWithFrame:CGRectMake(Device_Wdith-40, 0, 40, 40)];
     
@@ -1159,10 +1578,19 @@
     //    if (theTextField == self.remarksTxt) {
     //        [theTextField resignFirstResponder];
     //    }
+    
+#pragma mark 修改设备名称和通道名称
     if (theTextField == deviceNameTxt) {
         [theTextField resignFirstResponder];
         NSDictionary * temp = [NSDictionary dictionaryWithObjectsAndKeys:deviceNameTxt.text,@"NameStr",  nil];
         [self getRequest:9 requestDic:temp characteristic:[mydelegate.specialPeripheralInfo.characteristics objectAtIndex:0]  currPeripheral:self.currPeripheral delegate:self];
+        [self getRequest:11 requestDic:temp characteristic:mydelegate.Characteristic1914 currPeripheral:self.currPeripheral delegate:self];
+        NSDictionary * temp2 = @{@"NameStr":@"123"};
+        [self getRequest:12 requestDic:temp2 characteristic:mydelegate.Characteristic1914 currPeripheral:self.currPeripheral delegate:self];
+
+        [self getRequest:13 requestDic:nil characteristic:mydelegate.Characteristic1914 currPeripheral:self.currPeripheral delegate:self];
+
+        
         [userdefaults setObject:deviceNameTxt.text forKey:@"DeviceName"];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"updateDeviceName" object:nil];
 
@@ -1298,12 +1726,78 @@
     self.currPeripheral = mydelegate.currPeripheral;
     self->baby  = mydelegate.baby;
     self.characteristic = [mydelegate.characteristics objectAtIndex:1];
+    
+    if(pickerArray.count>0)
+    {
+        [pickerArray removeAllObjects];
+    }
+    
+    for(int i = 0;i <mydelegate.channelNum ;i++)
+    {
+        [pickerArray addObject:[NSString stringWithFormat:@"channel %d",(i+1)]];
+    }
+    if ([userdefaults objectForKey:@"channel1"]!=nil) {
+        if(pickerArray.count>0)
+        {
+            [pickerArray replaceObjectAtIndex:0 withObject:[userdefaults objectForKey:@"channel1"]];
+        }
+        else
+        {
+            [pickerArray addObject:[userdefaults objectForKey:@"channel1"]];
+        }
+    }
+    if ([userdefaults objectForKey:@"channel2"]!=nil) {
+        if(pickerArray.count>1)
+        {
+            [pickerArray replaceObjectAtIndex:1 withObject:[userdefaults objectForKey:@"channel2"]];
+        }
+        else
+        {
+            [pickerArray addObject:[userdefaults objectForKey:@"channel2"]];
+        }
+        
+    }
+    if ([userdefaults objectForKey:@"channel3"]!=nil) {
+        if(pickerArray.count>2)
+        {
+            [pickerArray replaceObjectAtIndex:2 withObject:[userdefaults objectForKey:@"channel3"]];
+        }
+        else
+        {
+            [pickerArray addObject:[userdefaults objectForKey:@"channel3"]];
+        }
+        
+    }
+    
+#pragma mark pickerArray
+//    if ([userdefaults objectForKey:@"channel4"]!=nil) {
+//        if(pickerArray.count>3)
+//        {
+//            [pickerArray replaceObjectAtIndex:3 withObject:[userdefaults objectForKey:@"channel4"]];
+//        }
+//        else
+//        {
+//            [pickerArray addObject:[userdefaults objectForKey:@"channel4"]];
+//        }
+//        //        [pickerArray replaceObjectAtIndex:3 withObject:[userdefaults objectForKey:@"channel4"]];
+//    }
 
 #pragma mark time
     
     [self reloadDeviceTime];
     
-    NSTimer * tm = [NSTimer scheduledTimerWithTimeInterval:30.0f target:self selector:@selector(reloadDeviceTime) userInfo:nil repeats:YES];
+    
+    if (tm == nil) {
+        tm = [NSTimer scheduledTimerWithTimeInterval:30.0f target:self selector:@selector(reloadDeviceTime) userInfo:nil repeats:YES];
+        
+    }
+
+    
+    [self readClick];
+    [self readClick1];
+    [self readClick2];
+    [self readClick3];
+
     
 }
 
@@ -1331,14 +1825,36 @@
 //                
 //                NSLog(@"%@ %@ %@",SettingDic,channelDic,setDic);
             
-            if ([[[alertView textFieldAtIndex:0].text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length] >0) {
+//            if ([[[alertView textFieldAtIndex:0].text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] length] >0) {
+            if ([[alertView textFieldAtIndex:0].text length] >0) {
+                
+            
                 if (setDic != nil) {
                     [channelDic setValue:setDic forKey:[NSString stringWithFormat:@"%d",channelIndex]];
                 }
                 
-                [SettingDic setValue:channelDic forKey:[alertView textFieldAtIndex:0].text];
-                [userdefaults setObject:SettingDic forKey:@"setting"];
-                [userdefaults setObject:channelDic forKey:@"settinglast"];
+//                [SettingDic setValue:channelDic forKey:[alertView textFieldAtIndex:0].text];
+//                
+//                [userdefaults setObject:SettingDic forKey:@"setting"];
+//                [userdefaults setObject:channelDic forKey:@"settinglast"];
+                
+                
+                if(setDic != nil)
+                {
+                    [SettingDic setValue:[setDic copy] forKey:[alertView textFieldAtIndex:0].text];
+#pragma mark 保存SettingDic
+
+                    [userdefaults setObject:SettingDic forKey:@"setting"];
+                    [userdefaults setObject:channelDic forKey:@"settinglast"];
+#pragma mark 重新创建了setDic  SettingDic
+//                    setDic = [[NSMutableDictionary alloc] init];
+//                    SettingDic = [[NSMutableDictionary alloc] init];
+                }
+                else
+                {
+                    [SVProgressHUD showInfoWithStatus:@"You haven't set any parameters"];
+                }
+
 
             }
             else
@@ -1352,10 +1868,13 @@
     else
     {
         if (buttonIndex == 0) {
-            return;
+#pragma mark return 注释掉了
+//            return;
             [channelDic setValue:setDic forKey:[NSString stringWithFormat:@"%d",channelIndex]];
             
             [SettingDic setValue:channelDic forKey:loadName];
+#pragma mark 保存SettingDic
+
             [userdefaults setObject:SettingDic forKey:@"setting"];
         }
         else
@@ -1719,6 +2238,7 @@
 
 #pragma mark --
 #pragma mark - UIActionSheet
+/*
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     
@@ -1972,6 +2492,285 @@
         
            }
 }
+*/
+
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    
+    
+    
+    if (buttonIndex == 0) {
+        
+    }
+    else
+    {
+        if (actionSheet == actionSheet1) {
+            
+//            NSArray *keys = [SettingDic allKeys];
+            channelDic = [NSMutableDictionary dictionaryWithDictionary:[SettingDic objectForKey:[keys objectAtIndex:(buttonIndex-1)]]];
+            [userdefaults setObject:channelDic forKey:@"settinglast"];
+            setDic = [NSMutableDictionary dictionaryWithDictionary:[channelDic objectForKey:[NSString stringWithFormat:@"%d",channelIndex]]];
+            loadName = [keys objectAtIndex:(buttonIndex-1)];
+            [userdefaults setObject:loadName forKey:@"loadName"];
+            
+            
+            NSMutableDictionary * dic = [SettingDic objectForKey:keys[buttonIndex - 1]];
+            [self loadMessage:dic];
+#pragma mark loading 修改
+//            loading = YES;
+        }
+        else if(actionSheet == actionSheet2)
+        {
+            channelTxt.text = [pickerArray objectAtIndex:(buttonIndex -1)];
+            if ([setDic count] != 0 && !loading) {
+                [channelDic setValue:setDic forKey:[NSString stringWithFormat:@"%d",channelIndex]];
+            }
+            channelIndex = buttonIndex;
+            CH = buttonIndex;
+            setDic = [NSMutableDictionary dictionaryWithDictionary:[channelDic objectForKey:[NSString stringWithFormat:@"%d",channelIndex]]];
+            
+            //            bool full = NO;
+            
+            
+            NSDictionary *temp = [setDic objectForKey:[NSString stringWithFormat:@"%@%d",@"turnOn",WEEK]];
+            if (temp !=nil) {
+                int h = [[[temp copy] objectForKey:@"value5"] intValue];
+                if (h>12) {
+                    
+                    h -=12;
+                }
+#pragma mark setbtnTitle
+                //                [TurnOnBtn setTitle:[NSString stringWithFormat:@"At  %d:%@  to %@%%",h,[[temp copy] objectForKey:@"value6"],[[temp copy] objectForKey:@"value4"]] forState:UIControlStateNormal];
+                //                full = YES;
+            }
+            
+            if (temp !=nil) {
+                int h = [[[temp copy] objectForKey:@"value5"] intValue];
+                if (h>12) {
+                    
+                    h -=12;
+                }
+                
+                NSInteger v3 =  [[temp objectForKey:@"value3"] integerValue];
+                NSString * v4 = [temp objectForKey:@"value4"];
+                //                NSString * v5 = [temp objectForKey:@"value5"];
+                NSString * v6 = [temp objectForKey:@"value6"];
+                
+                if (v3 == 0) {
+                    [TurnOnBtn setTitle:[NSString stringWithFormat:@"Exactly at Sunset to %@%%",[temp objectForKey:@"value4"]] forState:UIControlStateNormal];
+                }else if (v3 == 1){
+                    
+                    [TurnOnBtn setTitle:[NSString stringWithFormat:@"After Sunset to %@%%",v4] forState:UIControlStateNormal];
+                }else if (v3 == 2){
+                    NSString * strq;
+                    if (h>12) {
+                        strq = [NSString stringWithFormat:@"%d:%@PM",h-12,v6];
+                    }else{
+                        
+                        strq = [NSString stringWithFormat:@"%d:%@AM",h,v6];
+                    }
+                    [TurnOnBtn setTitle:[NSString stringWithFormat:@"At %@ to %@%%",strq,v4] forState:UIControlStateNormal];
+                }
+                
+                [self getRequest:7 requestDic:[temp copy] characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+
+                //                [TurnOnBtn setTitle:[NSString stringWithFormat:@"At  %d:%@  to %@%%",h,[[temp copy] objectForKey:@"value6"],[[temp copy] objectForKey:@"value4"]] forState:UIControlStateNormal];
+                //                full = YES;
+            }
+            else
+            {
+                [TurnOnBtn setTitle:@"--" forState:UIControlStateNormal];
+            }
+            
+            temp = [setDic objectForKey:[NSString stringWithFormat:@"%@%d",@"event1",WEEK]];
+            if (temp !=nil) {
+                int h = [[[temp copy] objectForKey:@"value5"] intValue];
+                if (h>12) {
+                    
+                    h -=12;
+                }
+                
+                [FirstEventBtn setTitle:[NSString stringWithFormat:@"At  %d:%@  to %@%%",h,[[temp copy] objectForKey:@"value6"],[[temp copy] objectForKey:@"value4"]] forState:UIControlStateNormal];
+                //                full = YES;
+                [self getRequest:7 requestDic:[temp copy] characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+            }
+            else
+            {
+                [FirstEventBtn setTitle:@"--" forState:UIControlStateNormal];
+            }
+            
+            
+            temp = [setDic objectForKey:[NSString stringWithFormat:@"%@%d",@"event2",WEEK]];
+            if (temp !=nil) {
+                int h = [[[temp copy] objectForKey:@"value5"] intValue];
+                if (h>12) {
+                    
+                    h -=12;
+                }
+                
+                [SecondEventBtn setTitle:[NSString stringWithFormat:@"At  %d:%@  to %@%%",h,[[temp copy] objectForKey:@"value6"],[[temp copy] objectForKey:@"value4"]] forState:UIControlStateNormal];
+                //                full = YES;
+                [self getRequest:7 requestDic:[temp copy] characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+            }
+            else
+            {
+                [SecondEventBtn setTitle:@"--" forState:UIControlStateNormal];
+            }
+            
+            
+            temp = [setDic objectForKey:[NSString stringWithFormat:@"%@%d",@"turnOff",WEEK]];
+            if (temp !=nil) {
+                int h = [[[temp copy] objectForKey:@"value4"] intValue];
+                if (h>12) {
+                    
+                    h -=12;
+                }
+                
+                [TurnOffBtn setTitle:[NSString stringWithFormat:@"At %d:%@  to %@%%",h,[[temp copy] objectForKey:@"value5"],[[temp copy] objectForKey:@"value3"]] forState:UIControlStateNormal];
+                //                full = YES;
+                [self getRequest:6 requestDic:[temp copy] characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+            }
+            else
+            {
+                [TurnOffBtn setTitle:@"--" forState:UIControlStateNormal];
+            }
+            
+            
+            //            loading = full;
+            
+        }
+        else if(actionSheet == actionSheet3)
+        {
+            //            channelTxt.text = [pickerArray objectAtIndex:(buttonIndex -1)];
+            [SettingsBtn setTitle:[pickerArray2 objectAtIndex:(buttonIndex -1)] forState:UIControlStateNormal];
+            
+            WEEK = ((int)buttonIndex -2);
+            
+            NSArray *keys = [channelDic allKeys];
+            if(keys.count>0)
+            {
+                //#pragma mark 这里可会有问题，自己加了一个if判断
+                //                if (keys.count <= buttonIndex - 1) {
+                //                    return;
+                //                }
+//                setDic = [NSMutableDictionary dictionaryWithDictionary:[channelDic objectForKey:[NSString stringWithFormat:@"%d",channelIndex]]];
+                //                loadName = [keys objectAtIndex:(buttonIndex-1)];
+                
+                //                setDic = [NSMutableDictionary dictionaryWithDictionary:[SettingDic objectForKey:[keys objectAtIndex:(buttonIndex -1)]]];
+                //                loadName = [keys objectAtIndex:(buttonIndex -1)];
+                //                bool full = NO;
+                
+                
+                NSDictionary *temp = [setDic objectForKey:[NSString stringWithFormat:@"%@%d",@"turnOn",WEEK]];
+                if (temp !=nil) {
+                    int h = [[[temp copy] objectForKey:@"value5"] intValue];
+                    if (h>12) {
+                        
+                        h -=12;
+                    }
+#pragma mark 需要修改
+                    
+                    NSInteger v3 =  [[temp objectForKey:@"value3"] integerValue];
+                    NSString * v4 = [temp objectForKey:@"value4"];
+                    //                    NSString * v5 = [temp objectForKey:@"value5"];
+                    NSString * v6 = [temp objectForKey:@"value6"];
+                    
+                    if (v3 == 0) {
+                        [TurnOnBtn setTitle:[NSString stringWithFormat:@"Exactly at Sunset to %@%%",[temp objectForKey:@"value4"]] forState:UIControlStateNormal];
+                    }else if (v3 == 1){
+                        
+                        [TurnOnBtn setTitle:[NSString stringWithFormat:@"After Sunset to %@%%",v4] forState:UIControlStateNormal];
+                    }else if (v3 == 2){
+                        NSString * strq;
+                        if (h>12) {
+                            strq = [NSString stringWithFormat:@"%d:%@PM",h-12,v6];
+                        }else{
+                            
+                            strq = [NSString stringWithFormat:@"%d:%@AM",h,v6];
+                        }
+                        [TurnOnBtn setTitle:[NSString stringWithFormat:@"At %@ to %@%%",strq,v4] forState:UIControlStateNormal];
+                        
+                    }
+                    [self getRequest:7 requestDic:[temp copy] characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+                    
+                    //                    [TurnOnBtn setTitle:[NSString stringWithFormat:@"At %d:%@ to %@%%",h,[[temp copy] objectForKey:@"value6"],[[temp copy] objectForKey:@"value4"]] forState:UIControlStateNormal];
+                    //                    full = YES;
+                }
+                else
+                {
+                    [TurnOnBtn setTitle:@"--" forState:UIControlStateNormal];
+                }
+                
+                temp = [setDic objectForKey:[NSString stringWithFormat:@"%@%d",@"event1",WEEK]];
+                if (temp !=nil) {
+                    int h = [[[temp copy] objectForKey:@"value5"] intValue];
+                    if (h>12) {
+                        
+                        h -=12;
+                    }
+                    
+                    [FirstEventBtn setTitle:[NSString stringWithFormat:@"At %d:%@ to %@%%",h,[[temp copy] objectForKey:@"value6"],[[temp copy] objectForKey:@"value4"]] forState:UIControlStateNormal];
+                    //                    full = YES;
+                    [self getRequest:7 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+                }
+                else
+                {
+                    [FirstEventBtn setTitle:@"--" forState:UIControlStateNormal];
+                }
+                
+                
+                temp = [setDic objectForKey:[NSString stringWithFormat:@"%@%d",@"event2",WEEK]];
+                if (temp !=nil) {
+                    int h = [[[temp copy] objectForKey:@"value5"] intValue];
+                    if (h>12) {
+                        
+                        h -=12;
+                    }
+                    
+                    [SecondEventBtn setTitle:[NSString stringWithFormat:@"At %d:%@ to %@%%",h,[[temp copy] objectForKey:@"value6"],[[temp copy] objectForKey:@"value4"]] forState:UIControlStateNormal];
+                    //                    full = YES;
+                    [self getRequest:7 requestDic:[temp copy] characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+                }
+                else
+                {
+                    [SecondEventBtn setTitle:@"--" forState:UIControlStateNormal];
+                }
+                
+                
+                temp = [setDic objectForKey:[NSString stringWithFormat:@"%@%d",@"turnOff",WEEK]];
+                if (temp !=nil) {
+                    int h = [[[temp copy] objectForKey:@"value4"] intValue];
+                    if (h>12) {
+                        
+                        h -=12;
+                    }
+                    
+                    [TurnOffBtn setTitle:[NSString stringWithFormat:@"At %d:%@ to%@%%",h,[[temp copy] objectForKey:@"value5"],[[temp copy] objectForKey:@"value3"]] forState:UIControlStateNormal];
+                    //                    full = YES;
+                    [self getRequest:6 requestDic:[temp copy] characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+                }
+                else
+                {
+                    [TurnOffBtn setTitle:@"--" forState:UIControlStateNormal];
+                }
+                
+                
+                //                loading = full;
+            }
+            else
+            {
+                [TurnOnBtn setTitle:@"--" forState:UIControlStateNormal];
+                [FirstEventBtn setTitle:@"--" forState:UIControlStateNormal];
+                [SecondEventBtn setTitle:@"--" forState:UIControlStateNormal];
+                [TurnOffBtn setTitle:@"--" forState:UIControlStateNormal];
+            }
+        }
+        
+        
+    }
+}
+
+
 - (void)actionSheetCancel:(UIActionSheet *)actionSheet{
     
 }
@@ -1988,10 +2787,70 @@
 #pragma mark -
 #pragma mark --TOUCH
 
+- (void)addDefaultDicToSettingDic{
+
+    NSMutableDictionary * defaultDic = [[NSMutableDictionary alloc] init];
+    NSDictionary * temp1 = [NSDictionary dictionaryWithObjectsAndKeys:@"0",@"index",[NSString stringWithFormat:@"%d",0],@"value1",[NSString stringWithFormat:@"%d",255],@"value2",[NSString stringWithFormat:@"%d",2],@"value3",[NSString stringWithFormat:@"%.0f",50.00],@"value4",[NSString stringWithFormat:@"%d",18],@"value5",[NSString stringWithFormat:@"%d",30],@"value6", nil];
+    
+    for (int i = -1; i<7; i++) {
+        NSMutableDictionary * tempDic2 = [NSMutableDictionary dictionaryWithDictionary:[temp1 copy]];
+        [tempDic2 setObject:[NSString stringWithFormat:@"%d",i] forKey:@"value1"];
+#pragma mark turnOn数据保存
+        
+        [defaultDic setObject:[tempDic2 copy] forKey:[NSString stringWithFormat:@"turnOn%d",i]];
+        tempDic2 = nil;
+        
+    }
+    
+    
+    NSDictionary * temp2 = [NSDictionary dictionaryWithObjectsAndKeys:@"1",@"index",[NSString stringWithFormat:@"%d",CH-1],@"value1",[NSString stringWithFormat:@"%d",(WEEK==-1?255:WEEK)],@"value2",@"0",@"value3",[NSString stringWithFormat:@"%.0f",Secondslider.value],@"value4",[NSString stringWithFormat:@"%d",[hour2 intValue]],@"value5",[NSString stringWithFormat:@"%d",[second2 intValue]],@"value6",@"0",@"value7", nil];
+    
+    for (int i = -1; i<7; i++) {
+        NSMutableDictionary * tempDic2 = [NSMutableDictionary dictionaryWithDictionary:[temp2 copy]];
+        [tempDic2 setObject:[NSString stringWithFormat:@"%d",i] forKey:@"value1"];
+#pragma mark event1数据保存
+        
+        [defaultDic setObject:[tempDic2 copy] forKey:[NSString stringWithFormat:@"event1%d",i]];
+        tempDic2 = nil;
+    }
+    
+    
+    NSDictionary * temp3 = [NSDictionary dictionaryWithObjectsAndKeys:@"1",@"index",[NSString stringWithFormat:@"%d",0],@"value1",[NSString stringWithFormat:@"%d",255],@"value2",@"0",@"value3",[NSString stringWithFormat:@"%.0f",Secondslider.value],@"value4",[NSString stringWithFormat:@"%d",6],@"value5",[NSString stringWithFormat:@"%d",30],@"value6",@"0",@"value7", nil];
+    
+    for (int i = -1; i<7; i++) {
+        NSMutableDictionary * tempDic2 = [NSMutableDictionary dictionaryWithDictionary:[temp3 copy]];
+        [tempDic2 setObject:[NSString stringWithFormat:@"%d",i] forKey:@"value1"];
+#pragma mark event2数据保存
+        
+        [defaultDic setObject:[tempDic2 copy] forKey:[NSString stringWithFormat:@"event2%d",i]];
+        tempDic2 = nil;
+    }
+    
+    
+    NSDictionary * temp4 = [NSDictionary dictionaryWithObjectsAndKeys:@"0",@"index",[NSString stringWithFormat:@"%d",1],@"value1",[NSString stringWithFormat:@"%d",255],@"value2",[NSString stringWithFormat:@"%d",2],@"value3",[NSString stringWithFormat:@"%d",6],@"value4",[NSString stringWithFormat:@"%d",30],@"value5", nil];
+    for (int i = -1; i<7; i++) {
+        NSMutableDictionary * tempDic2 = [NSMutableDictionary dictionaryWithDictionary:[temp4 copy]];
+        [tempDic2 setObject:[NSString stringWithFormat:@"%d",i] forKey:@"value1"];
+#pragma mark turnOff数据保存
+        
+        [defaultDic setObject:[tempDic2 copy] forKey:[NSString stringWithFormat:@"turnOff%d",i]];
+        tempDic2 = nil;
+    }
+    
+    
+    
+    [SettingDic setObject:defaultDic forKey:@"Default"];
+
+}
 
 -(void)LoadAction
 {
+    
+    
+#pragma mark 获取settingDic 111
     SettingDic = [NSMutableDictionary dictionaryWithDictionary:[userdefaults objectForKey:@"setting"]];
+    [self addDefaultDicToSettingDic];
+    
     if (SettingDic.count<1) {
         [SVProgressHUD showInfoWithStatus:@"The list is empty"];
     }
@@ -2004,8 +2863,8 @@
                        cancelButtonTitle:@"Cancel"
                        destructiveButtonTitle:nil
                        otherButtonTitles:nil];
-        
-        NSArray *keys = [SettingDic allKeys];
+#pragma mark allKeys
+        keys = [SettingDic allKeys];
         for (int i = 0; i< SettingDic.count; i++) {
             [actionSheet1 addButtonWithTitle:[keys objectAtIndex:i] ];
             
@@ -2267,25 +3126,55 @@
 //            [TurnOnBtn setTitle:[NSString stringWithFormat:@"At  00:00 to %@",FristLbl.text] forState:UIControlStateNormal];
             
             [TurnOnBtn setTitle:[NSString stringWithFormat:@"Exactly at Sunset to %.0f%%",Fristslider.value] forState:UIControlStateNormal];
-            TurnOnBtn.titleLabel.font = [UIFont systemFontOfSize:12];
+//            TurnOnBtn.titleLabel.font = [UIFont systemFontOfSize:12];
+            temp = [NSDictionary dictionaryWithObjectsAndKeys:@"0",@"index",[NSString stringWithFormat:@"%d",CH-1],@"value1",[NSString stringWithFormat:@"%d",(WEEK==-1?255:WEEK)],@"value2",[NSString stringWithFormat:@"%d",MODE],@"value3",[NSString stringWithFormat:@"%.0f",Fristslider.value],@"value4",[NSString stringWithFormat:@"%d",0],@"value5",[NSString stringWithFormat:@"%d",0],@"value6", nil];
+#pragma mark turnOn数据保存
+            [setDic setObject:temp forKey:[NSString stringWithFormat:@"turnOn%d",WEEK]];
+            NSLog(@"%@",setDic);
+            
+            [self getRequest:7 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
         }
         else if (MODE == 1)
         {
 //            [TurnOnBtn setTitle:[NSString stringWithFormat:@"At  %@:%@  to %@",[hour intValue]<10?[NSString stringWithFormat:@"0%@",hour]:hour,[second intValue]<10?[NSString stringWithFormat:@"0%@",second]:second,FristLbl.text] forState:UIControlStateNormal];
             [TurnOnBtn setTitle:[NSString stringWithFormat:@"After Sunset to %@",FristLbl.text] forState:UIControlStateNormal];
 //            TurnOnBtn.titleLabel.font = [UIFont systemFontOfSize:FONTSIZE];
-
+            temp = [NSDictionary dictionaryWithObjectsAndKeys:@"0",@"index",[NSString stringWithFormat:@"%d",CH-1],@"value1",[NSString stringWithFormat:@"%d",(WEEK==-1?255:WEEK)],@"value2",[NSString stringWithFormat:@"%d",MODE],@"value3",[NSString stringWithFormat:@"%.0f",Fristslider.value],@"value4",[NSString stringWithFormat:@"%d",[hour intValue]],@"value5",[NSString stringWithFormat:@"%d",[second intValue]],@"value6", nil];
+#pragma mark turnOn数据保存
+           
+            [setDic setObject:temp forKey:[NSString stringWithFormat:@"turnOn%d",WEEK]];
+            
+            
+            [self getRequest:7 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
             
         }else if (MODE == 2){
+            
+           
+
         
             [TurnOnBtn setTitle:[NSString stringWithFormat:@"At%@:%@ to %@",[hour intValue]<10?[NSString stringWithFormat:@"0%@",hour]:hour,[second intValue]<10?[NSString stringWithFormat:@"0%@",second]:second,FristLbl.text] forState:UIControlStateNormal];
             NSDate *selected = [FristdatePicker date];
             [dateFormatter setDateFormat:@"hh:mm aa"];
             NSString *str=[dateFormatter stringFromDate:selected];
 
-            [TurnOnBtn setTitle:[NSString stringWithFormat:@"At %@ to %@",str,FristLbl.text] forState:UIControlStateNormal];
+            [TurnOnBtn setTitle:[NSString stringWithFormat:@"At time %@ to %@",str,FristLbl.text] forState:UIControlStateNormal];
 
 //            TurnOnBtn.titleLabel.font = [UIFont systemFontOfSize:FONTSIZE];
+            
+            [dateFormatter setDateFormat:@"HH:mm"];
+            
+            NSString *str2=[dateFormatter stringFromDate:selected];
+            NSArray * tempArray = [str2 componentsSeparatedByString:@":"];
+            hour = [tempArray objectAtIndex:0];
+            second = [tempArray objectAtIndex:1];
+            temp = [NSDictionary dictionaryWithObjectsAndKeys:@"0",@"index",[NSString stringWithFormat:@"%d",CH-1],@"value1",[NSString stringWithFormat:@"%d",(WEEK==-1?255:WEEK)],@"value2",[NSString stringWithFormat:@"%d",MODE],@"value3",[NSString stringWithFormat:@"%.0f",Fristslider.value],@"value4",[NSString stringWithFormat:@"%d",MODE!=0?[hour intValue]:0],@"value5",[NSString stringWithFormat:@"%d",MODE!=0?[second intValue]:0],@"value6", nil];
+#pragma mark turnOn数据保存
+            
+            [setDic setObject:temp forKey:[NSString stringWithFormat:@"turnOn%d",WEEK]];
+//            NSLog(@"%@",setDic);
+
+            
+            [self getRequest:7 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
 
             
         }
@@ -2311,13 +3200,27 @@
 //            hour = [tempArray objectAtIndex:0];
 //            second = [tempArray objectAtIndex:1];
 //        }
-        temp = [NSDictionary dictionaryWithObjectsAndKeys:@"0",@"index",[NSString stringWithFormat:@"%d",CH-1],@"value1",[NSString stringWithFormat:@"%d",(WEEK==-1?255:WEEK)],@"value2",[NSString stringWithFormat:@"%d",MODE],@"value3",[NSString stringWithFormat:@"%.0f",Fristslider.value],@"value4",[NSString stringWithFormat:@"%d",MODE!=0?[hour intValue]:0],@"value5",[NSString stringWithFormat:@"%d",MODE!=0?[second intValue]:0],@"value6", nil];
-//        [setDic removeObjectForKey:[NSString stringWithFormat:@"%@%d",@"turnOn",WEEK]];
-        [setDic setObject:temp forKey:[NSString stringWithFormat:@"%@%d",@"turnOn",WEEK]];
 
         
-        [self getRequest:7 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+        if(WEEK==-1)
+        {
+            if (![nightlyArray containsObject:@"1"]) {
+               [setDic removeAllObjects];
+            }
+            
 
+            for (int i = -1; i<7; i++) {
+                NSMutableDictionary * tempDic2 = [NSMutableDictionary dictionaryWithDictionary:[temp copy]];
+                [tempDic2 setObject:[NSString stringWithFormat:@"%d",i] forKey:@"value1"];
+#pragma mark turnOn数据保存
+
+                [setDic setObject:[tempDic2 copy] forKey:[NSString stringWithFormat:@"turnOn%d",i]];
+                tempDic2 = nil;
+//                NSLog(@"%@",setDic);
+
+            }
+            [nightlyArray replaceObjectAtIndex:0 withObject:@"1"];
+        }
     }
     else
     {
@@ -2370,7 +3273,7 @@
         {
 //            [TurnOffBtn setTitle:[NSString stringWithFormat:@"At  %@:%@  to %@",[hour4 intValue]<10?[NSString stringWithFormat:@"0%@",hour4]:hour4,[second4 intValue]<10?[NSString stringWithFormat:@"0%@",second4]:second4,FristLbl.text] forState:UIControlStateNormal];
             [TurnOffBtn setTitle:[NSString stringWithFormat:@"At %@ to %@",str,FristLbl.text] forState:UIControlStateNormal];
-            [TurnOffBtn setTitle:[NSString stringWithFormat:@"At %@",str] forState:UIControlStateNormal];
+            [TurnOffBtn setTitle:[NSString stringWithFormat:@"At time %@",str] forState:UIControlStateNormal];
 //            TurnOffBtn.titleLabel.font = [UIFont systemFontOfSize:FONTSIZE];
 
             
@@ -2399,14 +3302,46 @@
         temp = [NSDictionary dictionaryWithObjectsAndKeys:@"0",@"index",[NSString stringWithFormat:@"%d",CH-1],@"value1",[NSString stringWithFormat:@"%d",(WEEK==-1?255:WEEK)],@"value2",[NSString stringWithFormat:@"%d",MODE],@"value3",[NSString stringWithFormat:@"%d",MODE!=0?[hour4 intValue]:0],@"value4",[NSString stringWithFormat:@"%d",MODE!=0?[second4 intValue]:0],@"value5", nil];
         
 //       [setDic setObject:temp forKey:@"turnOff"];
-        [setDic setObject:temp forKey:[NSString stringWithFormat:@"%@%d",@"turnOff",WEEK]];
+#pragma mark turnOff数据保存
+
+        [setDic setObject:temp forKey:[NSString stringWithFormat:@"turnOff%d",WEEK]];
         [self getRequest:6 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+        if(WEEK==-1)
+        {
+            if (![nightlyArray containsObject:@"1"]) {
+                [setDic removeAllObjects];
+            }
+            
+            
+            for (int i = -1; i<7; i++) {
+                NSMutableDictionary * tempDic2 = [NSMutableDictionary dictionaryWithDictionary:[temp copy]];
+                [tempDic2 setObject:[NSString stringWithFormat:@"%d",i] forKey:@"value1"];
+#pragma mark turnOff数据保存
+
+                [setDic setObject:[tempDic2 copy] forKey:[NSString stringWithFormat:@"turnOff%d",i]];
+                tempDic2 = nil;
+            }
+            [nightlyArray replaceObjectAtIndex:3 withObject:@"1"];
+        }
+
     }
     
 }
 
 -(void)FirstEventSaveAction
 {
+    
+    
+    PopView.hidden = YES;
+    NSDictionary * temp;
+    if (!fristSwitch.on) {
+        [FirstEventBtn setTitle:@"Disable" forState:UIControlStateNormal];
+
+        temp = [NSDictionary dictionaryWithObjectsAndKeys:@"1",@"index",[NSString stringWithFormat:@"%d",CH-1],@"value1",[NSString stringWithFormat:@"%d",(WEEK==-1?255:WEEK)],@"value2",@"0",@"value3",[NSString stringWithFormat:@"%.0f",Secondslider.value],@"value4",[NSString stringWithFormat:@"%d",[hour2 intValue]],@"value5",[NSString stringWithFormat:@"%d",[second2 intValue]],@"value6",[NSString stringWithFormat:@"%d",fristSwitch.on],@"value7", nil];
+        [self getRequest:7 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+
+    }else{
+    
         NSDate *selected = [SeconddatePicker date];
     
     NSLog(@"%@",[dateFormatter stringFromDate:[NSDate date]]);
@@ -2417,7 +3352,6 @@
     [FirstEventBtn setTitle:[NSString stringWithFormat:@"At %@ to %@",str,SecondLbl.text] forState:UIControlStateNormal];
 //    FirstEventBtn.titleLabel.font = [UIFont systemFontOfSize:FONTSIZE];
     
-    PopView.hidden = YES;
     
 //    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
 //    
@@ -2441,18 +3375,51 @@
     hour2 = [tempArray objectAtIndex:0];
     second2 = [tempArray objectAtIndex:1];
     
-    NSDictionary * temp = [NSDictionary dictionaryWithObjectsAndKeys:@"1",@"index",[NSString stringWithFormat:@"%d",CH-1],@"value1",[NSString stringWithFormat:@"%d",(WEEK==-1?255:WEEK)],@"value2",@"1",@"value3",[NSString stringWithFormat:@"%.0f",Secondslider.value],@"value4",[NSString stringWithFormat:@"%d",[hour2 intValue]],@"value5",[NSString stringWithFormat:@"%d",[second2 intValue]],@"value6", nil];
-    [self getRequest:7 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+    temp = [NSDictionary dictionaryWithObjectsAndKeys:@"1",@"index",[NSString stringWithFormat:@"%d",CH-1],@"value1",[NSString stringWithFormat:@"%d",(WEEK==-1?255:WEEK)],@"value2",@"1",@"value3",[NSString stringWithFormat:@"%.0f",Secondslider.value],@"value4",[NSString stringWithFormat:@"%d",[hour2 intValue]],@"value5",[NSString stringWithFormat:@"%d",[second2 intValue]],@"value6",[NSString stringWithFormat:@"%d",fristSwitch.on],@"value7", nil];
+        [self getRequest:7 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+    }
 //    [setDic setObject:temp forKey:@"event1"];
-    [setDic setObject:temp forKey:[NSString stringWithFormat:@"%@%d",@"event1",WEEK]];
+#pragma mark event1数据保存
+
+    [setDic setObject:temp forKey:[NSString stringWithFormat:@"event1%d",WEEK]];
     
-    
+    if(WEEK==-1)
+    {
+        if (![nightlyArray containsObject:@"1"]) {
+            [setDic removeAllObjects];
+        }
+        
+        for (int i = -1; i<7; i++) {
+            NSMutableDictionary * tempDic2 = [NSMutableDictionary dictionaryWithDictionary:[temp copy]];
+            [tempDic2 setObject:[NSString stringWithFormat:@"%d",i] forKey:@"value1"];
+#pragma mark event1数据保存
+
+            [setDic setObject:[tempDic2 copy] forKey:[NSString stringWithFormat:@"event1%d",i]];
+            tempDic2 = nil;
+        }
+        [nightlyArray replaceObjectAtIndex:1 withObject:@"1"];
+    }
+
 
     
 }
 
 -(void)SecondEventSaveAction
 {
+    PopView.hidden = YES;
+    NSDictionary * temp;
+    if (!secondSwitch.on) {
+        [SecondEventBtn setTitle:@"Disable" forState:UIControlStateNormal];
+        
+        temp = [NSDictionary dictionaryWithObjectsAndKeys:@"2",@"index",[NSString stringWithFormat:@"%d",CH-1],@"value1",[NSString stringWithFormat:@"%d",(WEEK==-1?255:WEEK)],@"value2",@"0",@"value3",[NSString stringWithFormat:@"%.0f",Thirdslider.value],@"value4",[NSString stringWithFormat:@"%d",[hour3 intValue]],@"value5",[NSString stringWithFormat:@"%d",[second3 intValue]],@"value6",[NSString stringWithFormat:@"%d",secondSwitch.on],@"value7", nil];
+        [self getRequest:7 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+
+        
+        
+    }else{
+
+    
+    
     [dateFormatter setDateFormat:@"hh:mm aa"];
     NSDate *selected = [ThirddatePicker date];
     
@@ -2461,7 +3428,6 @@
     [SecondEventBtn setTitle:[NSString stringWithFormat:@"At %@ to %@",str,ThirdLbl.text] forState:UIControlStateNormal];
     [SecondEventBtn setTitle:[NSString stringWithFormat:@"At %@ to %@",str,ThirdLbl.text] forState:UIControlStateNormal];
 //    SecondEventBtn.titleLabel.font = [UIFont systemFontOfSize:FONTSIZE];
-    PopView.hidden = YES;
     
 //    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
 //    
@@ -2485,12 +3451,31 @@
     hour3 = [tempArray objectAtIndex:0];
     second3 = [tempArray objectAtIndex:1];
     
-    NSDictionary * temp = [NSDictionary dictionaryWithObjectsAndKeys:@"2",@"index",[NSString stringWithFormat:@"%d",CH-1],@"value1",[NSString stringWithFormat:@"%d",(WEEK==-1?255:WEEK)],@"value2",@"1",@"value3",[NSString stringWithFormat:@"%.0f",Thirdslider.value],@"value4",[NSString stringWithFormat:@"%d",[hour3 intValue]],@"value5",[NSString stringWithFormat:@"%d",[second3 intValue]],@"value6", nil];
-    [self getRequest:7 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+    temp = [NSDictionary dictionaryWithObjectsAndKeys:@"2",@"index",[NSString stringWithFormat:@"%d",CH-1],@"value1",[NSString stringWithFormat:@"%d",(WEEK==-1?255:WEEK)],@"value2",@"1",@"value3",[NSString stringWithFormat:@"%.0f",Thirdslider.value],@"value4",[NSString stringWithFormat:@"%d",[hour3 intValue]],@"value5",[NSString stringWithFormat:@"%d",[second3 intValue]],@"value6",[NSString stringWithFormat:@"%d",secondSwitch.on],@"value7", nil];
+        [self getRequest:7 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+    }
 //    [setDic setObject:temp forKey:@"event2"];
-    [setDic setObject:temp forKey:[NSString stringWithFormat:@"%@%d",@"event2",WEEK]];
+#pragma mark event2数据保存
+
+    [setDic setObject:temp forKey:[NSString stringWithFormat:@"event2%d",WEEK]];
     
-    
+    if(WEEK==-1)
+    {
+        if (![nightlyArray containsObject:@"1"]) {
+            [setDic removeAllObjects];
+        }
+        
+        for (int i = -1; i<7; i++) {
+            NSMutableDictionary * tempDic2 = [NSMutableDictionary dictionaryWithDictionary:[temp copy]];
+            [tempDic2 setObject:[NSString stringWithFormat:@"%d",i] forKey:@"value1"];
+#pragma mark event2数据保存
+
+            [setDic setObject:[tempDic2 copy] forKey:[NSString stringWithFormat:@"event2%d",i]];
+            tempDic2 = nil;
+        }
+        [nightlyArray replaceObjectAtIndex:2 withObject:@"1"];
+    }
+
 }
 
 
@@ -2641,26 +3626,32 @@
 {
     PopView.hidden = YES;
     
-    if (!fristSwitch.on) {
-        
-        
-        [FirstEventBtn setTitle:@"disabled" forState:UIControlStateNormal];
-    }else{
-    
-        [FirstEventBtn setTitle:@"unused" forState:UIControlStateNormal];
-
-    }
-
-    if (!secondSwitch.on) {
-        
-        [SecondEventBtn setTitle:@"disabled" forState:UIControlStateNormal];
-        
-    }else{
-        
-        [SecondEventBtn setTitle:@"unused" forState:UIControlStateNormal];
-
-        
-    }
+//    if (!fristSwitch.on) {
+//        
+//        
+//        [FirstEventBtn setTitle:@"disabled" forState:UIControlStateNormal];
+//    }else{
+//    
+//        if ([FirstEventBtn.titleLabel.text isEqualToString:@"--"]) {
+//            [FirstEventBtn setTitle:@"unused" forState:UIControlStateNormal];
+//
+//        }
+//        
+//
+//    }
+//
+//    if (!secondSwitch.on) {
+//        
+//        [SecondEventBtn setTitle:@"disabled" forState:UIControlStateNormal];
+//        
+//    }else{
+//        
+//        if ([SecondEventBtn.titleLabel.text isEqualToString:@"--"]) {
+//            [SecondEventBtn setTitle:@"unused" forState:UIControlStateNormal];
+//
+//        }
+//        
+//    }
 
     
 }
@@ -2668,16 +3659,19 @@
 -(void)loadMessage:(NSMutableDictionary *)setDics
 {
     
-    bool full = NO;
+//    bool full = NO;
+//    NSLog(@"%@",setDics);
+//    NSArray * k = [setDics allKeys];
+//    NSLog(@"%@",k);
     
-    
-    NSDictionary *temp = [setDics objectForKey:[NSString stringWithFormat:@"%@%d",@"turnOn",WEEK]];
+    NSString * str1 = [NSString stringWithFormat:@"turnOn%d",WEEK];
+    NSDictionary *temp = [setDics objectForKey:str1];
     if (temp !=nil) {
         int h = [[[temp copy] objectForKey:@"value5"] intValue];
-        if (h>12) {
-            
-            h -=12;
-        }
+//        if (h>12) {
+//            
+//            h -=12;
+//        }
         NSInteger v3 =  [[temp objectForKey:@"value3"] integerValue];
         NSString * v4 = [temp objectForKey:@"value4"];
         NSString * v5 = [temp objectForKey:@"value5"];
@@ -2691,24 +3685,24 @@
         }else if (v3 == 2){
             NSString * strq;
             if (h>12) {
-                strq = [NSString stringWithFormat:@"%d:%@",h-12,v6];
+                strq = [NSString stringWithFormat:@"%d:%@PM",h-12,v6];
             }else{
                 
-                strq = [NSString stringWithFormat:@"%d:%@",h,v6];
+                strq = [NSString stringWithFormat:@"%d:%@AM",h,v6];
             }
-            [TurnOnBtn setTitle:[NSString stringWithFormat:@"At %@ to %@%%",strq,v4] forState:UIControlStateNormal];
+            [TurnOnBtn setTitle:[NSString stringWithFormat:@"At time %@ to %@%%",strq,v4] forState:UIControlStateNormal];
         }
-
+ [self getRequest:7 requestDic:[temp copy] characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
         
 //        [TurnOnBtn setTitle:[NSString stringWithFormat:@"At  %d:%@  to %@%%",h,[[temp copy] objectForKey:@"value6"],[[temp copy] objectForKey:@"value4"]] forState:UIControlStateNormal];
-        full = YES;
+//        full = YES;
     }
     else
     {
         [TurnOnBtn setTitle:@"--" forState:UIControlStateNormal];
     }
-    
-    temp = [setDic objectForKey:[NSString stringWithFormat:@"%@%d",@"event1",WEEK]];
+    NSString * str2 = [NSString stringWithFormat:@"event1%d",WEEK];
+    temp = [setDics objectForKey:str2];
     if (temp !=nil) {
         int h = [[[temp copy] objectForKey:@"value5"] intValue];
         NSInteger v3 =  [[temp objectForKey:@"value3"] integerValue];
@@ -2716,6 +3710,12 @@
 //        NSString * v5 = [temp objectForKey:@"value5"];
         NSString * v6 = [temp objectForKey:@"value6"];
         NSString * strT;
+        if (!v3) {
+            [FirstEventBtn setTitle:@"Disable" forState:UIControlStateNormal];
+            //        full = YES;
+            [self getRequest:7 requestDic:[temp copy] characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+
+        }else{
         if (h>12) {
             
             h -=12;
@@ -2731,15 +3731,16 @@
         
 //        [FirstEventBtn setTitle:[NSString stringWithFormat:@"At  %d:%@  to %@%%",h,[[temp copy] objectForKey:@"value6"],[[temp copy] objectForKey:@"value4"]] forState:UIControlStateNormal];
         [FirstEventBtn setTitle:[NSString stringWithFormat:@"At %@ PM to %@%%",strT,v4] forState:UIControlStateNormal];
-        full = YES;
+//        full = YES;
+         [self getRequest:7 requestDic:[temp copy] characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
     }
-    else
-    {
-        [FirstEventBtn setTitle:@"--" forState:UIControlStateNormal];
+//    else
+//    {
+//        [FirstEventBtn setTitle:@"--" forState:UIControlStateNormal];
+//    }
     }
-    
-    
-    temp = [setDic objectForKey:[NSString stringWithFormat:@"%@%d",@"event2",WEEK]];
+    NSString * str3 = [NSString stringWithFormat:@"event2%d",WEEK];
+    temp = [setDics objectForKey:str3];
     if (temp !=nil) {
         int h = [[[temp copy] objectForKey:@"value5"] intValue];
         NSInteger v3 =  [[temp objectForKey:@"value3"] integerValue];
@@ -2747,6 +3748,13 @@
         //        NSString * v5 = [temp objectForKey:@"value5"];
         NSString * v6 = [temp objectForKey:@"value6"];
         NSString * strT;
+        
+        if (!v3) {
+            [SecondEventBtn setTitle:@"Disable" forState:UIControlStateNormal];
+            //        full = YES;
+            [self getRequest:7 requestDic:[temp copy] characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+
+        }else{
         if (h>12) {
             
             h -=12;
@@ -2759,21 +3767,22 @@
 //        [SecondEventBtn setTitle:[NSString stringWithFormat:@"At  %d:%@  to %@%%",h,[[temp copy] objectForKey:@"value6"],[[temp copy] objectForKey:@"value4"]] forState:UIControlStateNormal];
         [SecondEventBtn setTitle:[NSString stringWithFormat:@"At %@ PM to %@%%",strT,v4] forState:UIControlStateNormal];
 
-        full = YES;
+//        full = YES;
+         [self getRequest:7 requestDic:[temp copy] characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
     }
-    else
-    {
-        [SecondEventBtn setTitle:@"--" forState:UIControlStateNormal];
+//    else
+//    {
+//        [SecondEventBtn setTitle:@"--" forState:UIControlStateNormal];
+//    }
     }
-    
-    
-    temp = [setDic objectForKey:[NSString stringWithFormat:@"%@%d",@"turnOff",WEEK]];
+    NSString * str4 = [NSString stringWithFormat:@"turnOff%d",WEEK];
+    temp = [setDics objectForKey:str4];
     if (temp !=nil) {
         int h = [[[temp copy] objectForKey:@"value4"] intValue];
-        if (h>12) {
-            
-            h -=12;
-        }
+//        if (h>12) {
+//            
+//            h -=12;
+//        }
         
 //        [TurnOffBtn setTitle:[NSString stringWithFormat:@"At  %d:%@  to %@%%",h,[[temp copy] objectForKey:@"value5"],[[temp copy] objectForKey:@"value3"]] forState:UIControlStateNormal];
         
@@ -2786,22 +3795,22 @@
             [TurnOffBtn setTitle:[NSString stringWithFormat:@"Exactly at Sunrise"] forState:UIControlStateNormal];
         }else if (v3 == 1){
             
-            [TurnOffBtn setTitle:[NSString stringWithFormat:@"After Sunrise to %@%%",v4] forState:UIControlStateNormal];
+            [TurnOffBtn setTitle:[NSString stringWithFormat:@"After Sunrise"] forState:UIControlStateNormal];
         }else if (v3 == 2){
             NSString * strq;
             if (h>12) {
-                strq = [NSString stringWithFormat:@"%d:%@PM",h-12,v6];
+                strq = [NSString stringWithFormat:@"%d:%@PM",h-12,v5];
             }else{
                 
-                strq = [NSString stringWithFormat:@"%d:%@AM",h,v6];
+                strq = [NSString stringWithFormat:@"%d:%@AM",h,v5];
             }
-            [TurnOffBtn setTitle:[NSString stringWithFormat:@"At %@ to %@%%",strq,v4] forState:UIControlStateNormal];
+            [TurnOffBtn setTitle:[NSString stringWithFormat:@"At time %@",strq] forState:UIControlStateNormal];
         }
         
-        
+        [self getRequest:6 requestDic:[temp copy] characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
 //        [TurnOffBtn setTitle:[NSString stringWithFormat:@"At  %d:%@  to %@%%",h,[[temp copy] objectForKey:@"value6"],[[temp copy] objectForKey:@"value4"]] forState:UIControlStateNormal];
 
-        full = YES;
+//        full = YES;
     }
     else
     {
@@ -2809,7 +3818,7 @@
     }
     
     
-    loading = full;
+//    loading = full;
 
 }
 
@@ -2923,6 +3932,141 @@
             
         }
     }
+    
+    if (index == TurnOnStatus||index == TurnOffStatus || index == FristEvent || index == SecondEvent) {
+        NSString * chaneStr ;
+        NSString * weekStr ;
+        NSString * modeStr;
+        NSString * valueStr ;
+        NSString * hourStr ;
+        NSString * minStr;
+        
+        
+        unsigned char rsp[20];
+        [characteristics.value getBytes:&rsp length:20];
+        NSString * lengthStr = nil;
+        // 将值转成16进制
+        NSString *newStr;
+        for(int i= 12; i<sizeof(rsp);i++)
+        {
+            newStr = [NSString stringWithFormat:@"%x",rsp[i]&0xff];///16进制数
+            lengthStr = [NSString stringWithFormat:@"%@",newStr];
+            
+            
+            //转换类型
+            const char *swtr = [lengthStr cStringUsingEncoding:NSASCIIStringEncoding];
+            int  nResult=(int)strtol(swtr,NULL,16) ;
+            switch (i - 12) {
+                case 0:
+                    chaneStr = [NSString stringWithFormat:@"%d",nResult];
+                    break;
+                case 1:
+                    weekStr = [NSString stringWithFormat:@"%d",nResult];
+                    break;
+                case 2:
+                    modeStr = [NSString stringWithFormat:@"%d",nResult];
+                    break;
+                case 3:
+                    valueStr = [NSString stringWithFormat:@"%d",nResult];
+                    
+                    break;
+                case 4:
+                    hourStr = [NSString stringWithFormat:@"%d",nResult];
+                    break;
+                case 5:
+                    minStr = [NSString stringWithFormat:@"%d",nResult];
+                    break;
+                default:
+                    break;
+            }
+            
+        }
+        
+        NSInteger  weekDay = [weekStr integerValue];
+        NSInteger modeNum = [modeStr integerValue];
+        float valueNum = [valueStr floatValue];
+        NSInteger hourNum = [hourStr integerValue];
+        NSInteger minNum = [minStr integerValue];
+        if (index == TurnOnStatus) {
+            NSLog(@"读取到开的状态%@",characteristics.value);
+            
+            switch (modeNum) {
+                case 0:
+                    [TurnOnBtn setTitle:[NSString stringWithFormat:@"Exactly at Sunset to %.0f%%",valueNum] forState:UIControlStateNormal];
+                    break;
+                case 1:[TurnOnBtn setTitle:[NSString stringWithFormat:@"After Sunset to %@%%",valueStr] forState:UIControlStateNormal];
+                    break;
+                case 2:[TurnOnBtn setTitle:[NSString stringWithFormat:@"At%@:%@ to %@%%",hourStr,minStr,valueStr] forState:UIControlStateNormal];
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        if (index == TurnOffStatus) {
+            NSLog(@"读取到关的状态%@",characteristics.value);
+            
+            switch (modeNum) {
+                case 0:
+                    [TurnOffBtn setTitle:@"Exactly at Sunrise" forState:UIControlStateNormal];
+                    break;
+                case 1:
+                    [TurnOffBtn setTitle:[NSString stringWithFormat:@"After Sunrise"] forState:UIControlStateNormal];
+                    break;
+                case 2:
+                    [TurnOffBtn setTitle:[NSString stringWithFormat:@"At time %@%%",valueStr] forState:UIControlStateNormal];
+                    break;
+                default:
+                    break;
+            }
+
+            
+        }
+        
+        
+        if (index == FristEvent) {
+            NSLog(@"读取到event1的状态%@",characteristics.value);
+            if (modeNum == 0) {
+                [FirstEventBtn setTitle:@"Disable" forState:UIControlStateNormal];
+//                [SecondEventBtn setTitle:@"Disable" forState:UIControlStateNormal];
+
+            }else{
+                
+                if (hourNum < 12) {
+                    [FirstEventBtn setTitle:[NSString stringWithFormat:@"At %d:%@AM to %@%%",hourNum,minStr,valueStr] forState:UIControlStateNormal];
+
+                }else{
+                    [FirstEventBtn setTitle:[NSString stringWithFormat:@"At %d:%@PM to %@%%",hourNum -12,minStr,valueStr] forState:UIControlStateNormal];
+                }
+
+                
+            }
+            
+        }
+        
+        if (index == SecondEvent) {
+            NSLog(@"读取到event2的状态%@",characteristics.value);
+            
+            if (modeNum == 0) {
+//                [FirstEventBtn setTitle:@"Disable" forState:UIControlStateNormal];
+                [SecondEventBtn setTitle:@"Disable" forState:UIControlStateNormal];
+                
+            }else{
+            
+                if (hourNum < 12) {
+                    [SecondEventBtn setTitle:[NSString stringWithFormat:@"At %d:%@AM to %@%%",hourNum,minStr,valueStr] forState:UIControlStateNormal];
+                    
+                }else{
+                    [SecondEventBtn setTitle:[NSString stringWithFormat:@"At %d:%@PM to %@%%",hourNum -12,minStr,valueStr] forState:UIControlStateNormal];
+                }
+
+
+            }
+
+            
+        }
+
+    }
 
     
 }
@@ -2933,10 +4077,10 @@
         SeconddatePicker.hidden = YES;
         Secondslider.hidden = YES;
         SecondLbl.hidden = YES;
-        FirstEventSaveBtn.hidden = YES;
+//        FirstEventSaveBtn.hidden = YES;
         
-        NSDictionary * temp = [NSDictionary dictionaryWithObjectsAndKeys:@"1",@"index",[NSString stringWithFormat:@"%d",CH-1],@"value1",[NSString stringWithFormat:@"%d",(WEEK==-1?255:WEEK)],@"value2",@"0",@"value3",[NSString stringWithFormat:@"%.0f",Secondslider.value],@"value4",[NSString stringWithFormat:@"%d",[hour2 intValue]],@"value5",[NSString stringWithFormat:@"%d",[second2 intValue]],@"value6", nil];
-        [self getRequest:7 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+//        NSDictionary * temp = [NSDictionary dictionaryWithObjectsAndKeys:@"1",@"index",[NSString stringWithFormat:@"%d",CH-1],@"value1",[NSString stringWithFormat:@"%d",(WEEK==-1?255:WEEK)],@"value2",@"0",@"value3",[NSString stringWithFormat:@"%.0f",Secondslider.value],@"value4",[NSString stringWithFormat:@"%d",[hour2 intValue]],@"value5",[NSString stringWithFormat:@"%d",[second2 intValue]],@"value6", nil];
+//        [self getRequest:7 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
 
         
     }else{
@@ -2944,7 +4088,7 @@
         SeconddatePicker.hidden = NO;
         Secondslider.hidden = NO;
         SecondLbl.hidden = NO;
-        FirstEventSaveBtn.hidden = NO;
+//        FirstEventSaveBtn.hidden = NO;
         
     }
     
@@ -2957,10 +4101,10 @@
         ThirddatePicker.hidden = YES;
         Thirdslider.hidden = YES;
         ThirdLbl.hidden = YES;
-        SecondEventSaveBtn.hidden = YES;
+//        SecondEventSaveBtn.hidden = YES;
         
-        NSDictionary * temp = [NSDictionary dictionaryWithObjectsAndKeys:@"2",@"index",[NSString stringWithFormat:@"%d",CH-1],@"value1",[NSString stringWithFormat:@"%d",(WEEK==-1?255:WEEK)],@"value2",@"0",@"value3",[NSString stringWithFormat:@"%.0f",Secondslider.value],@"value4",[NSString stringWithFormat:@"%d",[hour2 intValue]],@"value5",[NSString stringWithFormat:@"%d",[second2 intValue]],@"value6", nil];
-        [self getRequest:7 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
+//        NSDictionary * temp = [NSDictionary dictionaryWithObjectsAndKeys:@"2",@"index",[NSString stringWithFormat:@"%d",CH-1],@"value1",[NSString stringWithFormat:@"%d",(WEEK==-1?255:WEEK)],@"value2",@"0",@"value3",[NSString stringWithFormat:@"%.0f",Secondslider.value],@"value4",[NSString stringWithFormat:@"%d",[hour2 intValue]],@"value5",[NSString stringWithFormat:@"%d",[second2 intValue]],@"value6", nil];
+//        [self getRequest:7 requestDic:temp characteristic:self.characteristic  currPeripheral:self.currPeripheral delegate:self];
         
         
     }else{
@@ -2968,11 +4112,85 @@
         ThirddatePicker.hidden = NO;
         Thirdslider.hidden = NO;
         ThirdLbl.hidden = NO;
-        SecondEventSaveBtn.hidden = NO;
+//        SecondEventSaveBtn.hidden = NO;
         
     }
 
     
 }
+
+
+- (void)stopReadTime{
+    
+    [tm invalidate];
+    tm = nil;
+}
+
+
+
+//测试读取按钮
+- (void)readClick{
+    
+    NSDictionary * temp = @{@"index":@"0",@"value1":@"0",@"value2":@"1"};
+    //    [self readRequest:11 requestDic:temp currPeripheral:self.currPeripheral characteristicArray:mydelegate.specialPeripheralInfo.characteristics delegate:self Baby:self->baby callFrom:DeviceNameRead];
+    
+    CBCharacteristic * c = [mydelegate.characteristics objectAtIndex:0];
+    
+    NSLog(@"%@",c.UUID);
+    //    [self getRequest:11 requestDic:temp characteristic:[mydelegate.specialPeripheralInfo.characteristics objectAtIndex:0]  currPeripheral:self.currPeripheral delegate:self];
+    
+    
+    [self readRequest:11 requestDic:temp currPeripheral:self.currPeripheral characteristicArray:mydelegate.characteristics delegate:self Baby:self->baby callFrom:PreviewRead];
+    
+}
+
+
+- (void)readClick1{
+    
+    
+    NSDictionary * temp = @{@"index":@"1",@"value1":@"0",@"value2":@"1"};
+    //    [self readRequest:11 requestDic:temp currPeripheral:self.currPeripheral characteristicArray:mydelegate.specialPeripheralInfo.characteristics delegate:self Baby:self->baby callFrom:DeviceNameRead];
+    
+    CBCharacteristic * c = [mydelegate.characteristics objectAtIndex:0];
+    
+    NSLog(@"%@",c.UUID);
+    //    [self getRequest:11 requestDic:temp characteristic:[mydelegate.specialPeripheralInfo.characteristics objectAtIndex:0]  currPeripheral:self.currPeripheral delegate:self];
+    
+    
+    [self readRequest:11 requestDic:temp currPeripheral:self.currPeripheral characteristicArray:mydelegate.characteristics delegate:self Baby:self->baby callFrom:PreviewRead];
+    
+}
+
+- (void)readClick2{
+    
+    NSDictionary * temp = @{@"index":@"2",@"value1":@"0",@"value2":@"1"};
+    //    [self readRequest:11 requestDic:temp currPeripheral:self.currPeripheral characteristicArray:mydelegate.specialPeripheralInfo.characteristics delegate:self Baby:self->baby callFrom:DeviceNameRead];
+    
+    CBCharacteristic * c = [mydelegate.characteristics objectAtIndex:0];
+    
+    NSLog(@"%@",c.UUID);
+    //    [self getRequest:11 requestDic:temp characteristic:[mydelegate.specialPeripheralInfo.characteristics objectAtIndex:0]  currPeripheral:self.currPeripheral delegate:self];
+    
+    
+    [self readRequest:11 requestDic:temp currPeripheral:self.currPeripheral characteristicArray:mydelegate.characteristics delegate:self Baby:self->baby callFrom:PreviewRead];
+    
+}
+
+- (void)readClick3{
+    
+    NSDictionary * temp = @{@"index":@"3",@"value1":@"0",@"value2":@"255"};
+    //    [self readRequest:11 requestDic:temp currPeripheral:self.currPeripheral characteristicArray:mydelegate.specialPeripheralInfo.characteristics delegate:self Baby:self->baby callFrom:DeviceNameRead];
+    
+    CBCharacteristic * c = [mydelegate.characteristics objectAtIndex:0];
+    
+    NSLog(@"%@",c.UUID);
+    //    [self getRequest:11 requestDic:temp characteristic:[mydelegate.specialPeripheralInfo.characteristics objectAtIndex:0]  currPeripheral:self.currPeripheral delegate:self];
+    
+    
+    [self readRequest:11 requestDic:temp currPeripheral:self.currPeripheral characteristicArray:mydelegate.characteristics delegate:self Baby:self->baby callFrom:PreviewRead];
+    
+}
+
+
 
 @end

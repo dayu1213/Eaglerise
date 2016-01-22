@@ -264,7 +264,24 @@ static RemoteController *instance;
                        else if ([lengthStr isEqualToString:@"00"])
                        {
                            [self.progress resultStr:characteristics index:DeviceTypeRead];
+                       }else if ([lengthStr isEqualToString:@"14"]){
+                           
+                           [self.progress resultStr:characteristics index:TurnOnStatus];
+                       }else if ([lengthStr isEqualToString:@"16"]){
+                           
+                           [self.progress resultStr:characteristics index:TurnOffStatus];
+                       }else if ([lengthStr isEqualToString:@"18"]){
+                           
+                           [self.progress resultStr:characteristics index:FristEvent];
+                       }else if ([lengthStr isEqualToString:@"1A"]){
+                           
+                           [self.progress resultStr:characteristics index:SecondEvent];
                        }
+
+                           
+                           
+                           
+                           
                        }
 //                       switch (callFrom) {
 //                           case DeviceRead:

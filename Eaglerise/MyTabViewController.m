@@ -107,7 +107,7 @@
     [RefreshBtn addTarget:self action:@selector(RefreshAction) forControlEvents:UIControlEventTouchUpInside];
     [RefreshBtn.titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
 #pragma mark 刷新按钮
-//    [bgView addSubview:RefreshBtn];
+    [bgView addSubview:RefreshBtn];
     
     UIButton * DisconnectBtn = [[UIButton alloc] initWithFrame:CGRectMake(30, 20, 55, 34)];
     [DisconnectBtn setTitleColor:wordSelColor forState:UIControlStateNormal];
@@ -117,7 +117,7 @@
     [DisconnectBtn addTarget:self action:@selector(DisconnectBtnClick) forControlEvents:UIControlEventTouchUpInside];
     [DisconnectBtn.titleLabel setFont:[UIFont boldSystemFontOfSize:16]];
 #pragma mark 断开按钮
-//    [bgView addSubview:DisconnectBtn];
+    [bgView addSubview:DisconnectBtn];
 
     
     Lbl = [[UILabel alloc]initWithFrame:CGRectMake(0, 52.5, Device_Wdith, 1.5)];
@@ -349,7 +349,11 @@
             [tempImg2 setImage:[UIImage imageNamed:@"Control"]];
             [tempImg3 setImage:[UIImage imageNamed:@"Setting"]];
             [tempImg4 setImage:[UIImage imageNamed:@"Overview"]];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"heartstop" object:nil];
             
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"readTimeStop" object:nil];
+
+
 //            [_MainBtn setBackgroundColor:[UIColor colorWithRed:0.114 green:0.459 blue:0.682 alpha:1]];
 //            [_FeedbackBtn setBackgroundColor:[UIColor colorWithRed:0.192 green:0.529 blue:0.773 alpha:1]];
 //            [SettingBtn setBackgroundColor:[UIColor colorWithRed:0.192 green:0.529 blue:0.773 alpha:1]];
@@ -368,6 +372,11 @@
             [tempImg2 setImage:[UIImage imageNamed:@"ControlSel"]];
             [tempImg3 setImage:[UIImage imageNamed:@"Setting"]];
             [tempImg4 setImage:[UIImage imageNamed:@"Overview"]];
+            
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"heartBegan" object:nil];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"readTimeStop" object:nil];
+
+            
 //            [_MainBtn setBackgroundColor:[UIColor colorWithRed:0.192 green:0.529 blue:0.773 alpha:1]];
 //            [_FeedbackBtn setBackgroundColor:[UIColor colorWithRed:0.114 green:0.459 blue:0.682 alpha:1]];
 //            [SettingBtn setBackgroundColor:[UIColor colorWithRed:0.192 green:0.529 blue:0.773 alpha:1]];
@@ -393,6 +402,8 @@
             [tempImg3 setImage:[UIImage imageNamed:@"SettingSel"]];
             [tempImg4 setImage:[UIImage imageNamed:@"Overview"]];
        [[NSNotificationCenter defaultCenter] postNotificationName:@"loadSetting" object:self userInfo:nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"heartstop" object:nil];
+
             
             break;
         case 106:
@@ -409,6 +420,10 @@
             [tempImg3 setImage:[UIImage imageNamed:@"Setting"]];
             [tempImg4 setImage:[UIImage imageNamed:@"OverviewSel"]];
             [[NSNotificationCenter defaultCenter] postNotificationName:@"loadOverView" object:self userInfo:nil];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"heartstop" object:nil];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"readTimeStop" object:nil];
+
+
             break;
         default:
             break;
@@ -560,6 +575,8 @@
             [_contentSView setContentSize: CGSizeMake(Device_Wdith*4, Device_Height-35)];
             huaHMSegmentedControl = 0;
             [self.contentSView scrollRectToVisible:CGRectMake(Device_Wdith * 0, 0, Device_Wdith, Device_Height-44) animated:YES];
+            
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"Refresh" object:self userInfo:nil];
             break;
         default:
             break;

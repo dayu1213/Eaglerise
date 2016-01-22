@@ -49,3 +49,13 @@
 #define VersionRead (7)
 //获取状态
 #define DeviceTypeRead (8)
+//获取turn on 状态
+#define TurnOnStatus (9)
+//获取turn off 状态
+#define TurnOffStatus (10)
+//获取事件一
+#define FristEvent (11)
+//获取事件二
+#define SecondEvent (12)
+
+
